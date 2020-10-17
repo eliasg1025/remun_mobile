@@ -1,4 +1,5 @@
 import 'package:remun_mobile/src/models/payment_model.dart';
+import 'package:remun_mobile/src/models/tarja_model.dart';
 
 class EmployeeModel
 {
@@ -9,6 +10,7 @@ class EmployeeModel
   String banco;
   String numeroCuenta;
   List<PaymentModel> payments;
+  List<TarjaModel> tarja;
 
   EmployeeModel({
     this.id,
@@ -17,13 +19,17 @@ class EmployeeModel
     this.apellidoMaterno,
     this.banco,
     this.numeroCuenta,
-    this.payments
+    this.payments,
+    this.tarja
   });
 
   factory EmployeeModel.fromJsonMap(Map<String, dynamic> json)
   {
     var list = json['payments'] as List;
     List<PaymentModel> paymentsList = list.map((i) => PaymentModel.fromJsonMap(i)).toList();
+
+    var list1 = json['tarja'] as List;
+    List<TarjaModel> tarjaList = list1.map((i) => TarjaModel.fromJson(i)).toList();
 
     return EmployeeModel(
         id: json['id'],
@@ -33,6 +39,7 @@ class EmployeeModel
         banco: json['banco'],
         numeroCuenta: json['numero_cuenta'],
         payments: paymentsList,
+        tarja: tarjaList
     );
   }
 }

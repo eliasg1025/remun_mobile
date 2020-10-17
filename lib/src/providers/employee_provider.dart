@@ -20,6 +20,8 @@ class EmployeeProvider
 
     final Map<String, dynamic> decodedData = json.decode(resp.body);
 
+    print(decodedData);
+
     final EmployeeModel employee = EmployeeModel.fromJsonMap(decodedData);
 
     return employee;

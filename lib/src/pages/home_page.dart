@@ -3,6 +3,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:remun_mobile/src/bloc/provider.dart';
 import 'package:remun_mobile/src/models/employee_model.dart';
 import 'package:remun_mobile/src/models/payment_model.dart';
+import 'package:remun_mobile/src/models/tarja_model.dart';
 import 'package:remun_mobile/src/providers/employee_provider.dart';
 import 'package:remun_mobile/src/utils/utils.dart';
 
@@ -17,59 +18,75 @@ class HomePage extends StatelessWidget
 
     final bloc = Provider.of(context);
 
+    employeeProvider.cargarPagos();
+
     return Scaffold(
       body: Stack(
         children: [
           _crearFondo(context),
-          SafeArea(
-            child: SingleChildScrollView(
-              child: Container(
-                padding: EdgeInsets.symmetric(horizontal: 20),
-                margin: EdgeInsets.symmetric(horizontal: 30),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    SizedBox(height: 80),
-                    Container(
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
+          FutureBuilder(
+            future: employeeProvider.cargarPagos(),
+            builder: (BuildContext context, AsyncSnapshot<EmployeeModel> snapshot) {
+              if (snapshot.hasData) {
+                final employee = snapshot.data;
+
+                final currentPayment = employee.payments[0];
+
+
+                return SafeArea(
+                  child: SingleChildScrollView(
+                    child: Container(
+                      padding: EdgeInsets.symmetric(horizontal: 20),
+                      margin: EdgeInsets.symmetric(horizontal: 30),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Text(
-                            'SEPTIEMBRE 2020',
-                            style: TextStyle(
-                                color: Colors.white,
-                                fontSize: 25,
-                                fontWeight: FontWeight.w600
+                          SizedBox(height: 80),
+                          Container(
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Text(
+                                  '${ obtenerMes(currentPayment.mes) } ${ currentPayment.anio }',
+                                  style: TextStyle(
+                                      color: Colors.white,
+                                      fontSize: 25,
+                                      fontWeight: FontWeight.w600
+                                  ),
+                                ),
+                              ],
                             ),
                           ),
+                          SizedBox(height: 40,),
+                          _crearTarjeta(context, currentPayment),
+                          SizedBox(height: 40,),
+                          Container(
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                _crearTarjetasIngresosEgresos(context, 1, currentPayment),
+                                _crearTarjetasIngresosEgresos(context, 0, currentPayment)
+                              ],
+                            ),
+                          ),
+                          SizedBox(height: 50,),
+                          Column(
+                            children: [
+                              Container(
+                                child: _crearGrilla(context, employee.tarja),
+                              )
+                            ],
+                          )
                         ],
                       ),
                     ),
-                    SizedBox(height: 40,),
-                    _crearTarjeta(context),
-                    SizedBox(height: 40,),
-                    Container(
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          _crearTarjetasIngresosEgresos(context, 1),
-                          _crearTarjetasIngresosEgresos(context, 0)
-                        ],
-                      ),
-                    ),
-                    SizedBox(height: 50,),
-                    Column(
-                      children: [
-                        Container(
-                          child: _crearGrilla(context),
-                        )
-                      ],
-                    )
-                  ],
-                ),
-              ),
-            ),
-          )
+                  ),
+                );
+              } else {
+                return Center(child: CircularProgressIndicator());
+              }
+            }
+          ),
         ],
       ),
       drawer: Drawer(
@@ -79,21 +96,21 @@ class HomePage extends StatelessWidget
     );
   }
 
-  Widget _crearGrilla(BuildContext context) => GridView.count(
+  Widget _crearGrilla(BuildContext context, List<TarjaModel> tarja) => GridView.count(
     shrinkWrap: true,
     physics: ClampingScrollPhysics(),
     crossAxisCount: 7,
     padding: const EdgeInsets.all(4),
     mainAxisSpacing: 4,
     crossAxisSpacing: 4,
-    children: _buildCridTielList(context, 30),
+    children: _buildCridTielList(context, tarja),
   );
 
-  List<Container> _buildCridTielList(BuildContext context, int count) => List.generate(
-    count, (i) => Container(child: _crearItemGrilla(context, i),)
+  List<Container> _buildCridTielList(BuildContext context, List<TarjaModel> tarja) => List.generate(
+    tarja.length, (i) => Container(child: _crearItemGrilla(context, tarja[i]),)
   );
 
-  _crearItemGrilla(BuildContext context, int i) {
+  _crearItemGrilla(BuildContext context, TarjaModel tarjaModel) {
     return Container(
       child: ClipRRect(
         borderRadius: BorderRadius.all(Radius.circular(5)),
@@ -119,7 +136,7 @@ class HomePage extends StatelessWidget
                 mainAxisAlignment: MainAxisAlignment.center,
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-                  Text('Mie 1',
+                  Text('${ tarjaModel.fecha }',
                     style: TextStyle(
                       fontSize: 8.5
                     ),
@@ -129,7 +146,7 @@ class HomePage extends StatelessWidget
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       Text(
-                        '8',
+                        '${ tarjaModel.horas }',
                         style: GoogleFonts.muli(
                             textStyle: Theme.of(context).textTheme.display1,
                             fontSize: 12,
@@ -186,7 +203,7 @@ class HomePage extends StatelessWidget
     );
   }
 
-  _crearTarjeta(BuildContext context) {
+  _crearTarjeta(BuildContext context, PaymentModel payment) {
     return Container(
       child: ClipRRect(
         borderRadius: BorderRadius.all(Radius.circular(15)),
@@ -226,7 +243,7 @@ class HomePage extends StatelessWidget
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       Text(
-                        'S/. 6,354.00',
+                        'S/. ${ payment.monto }',
                         style: GoogleFonts.muli(
                           textStyle: Theme.of(context).textTheme.display1,
                           fontSize: 45,
@@ -261,7 +278,7 @@ class HomePage extends StatelessWidget
     );
   }
 
-  _crearTarjetasIngresosEgresos(BuildContext context, int ingresos) {
+  _crearTarjetasIngresosEgresos(BuildContext context, int ingresos, PaymentModel payment) {
 
     Color colorFondo = ingresos == 1 ? Colors.lightGreen : Colors.redAccent;
     String titulo = ingresos == 1 ? 'Haberes' : 'Descuentos';
@@ -304,7 +321,7 @@ class HomePage extends StatelessWidget
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       Text(
-                        '${ ingresos == 1 ? '+' : '-' } S/. 2000.00',
+                        '${ ingresos == 1 ? '+' : '-' } S/. ${ ingresos == 1 ? payment.haberes : payment.descuentos }',
                         style: TextStyle(
                             fontSize: 20,
                             color: Colors.white,
@@ -338,37 +355,6 @@ class HomePage extends StatelessWidget
       ),
     );
   }
-
-  _crearPanelUsuario(BuildContext context) {
-    return FutureBuilder(
-      future: employeeProvider.cargarPagos(),
-      builder: (BuildContext context, AsyncSnapshot<EmployeeModel> snapshot) {
-        if (snapshot.hasData) {
-          final employee = snapshot.data;
-
-          return Container(
-            child: Column(
-              children: <Widget>[
-                Text('${ employee.nombre } ${ employee.apellidoPaterno } ${ employee.apellidoMaterno }'),
-                Text('Banco: ${ employee.banco }'),
-                Text('Número de Cuenta: ${ employee.numeroCuenta }'),
-                SizedBox(height: 40.0,),
-                ListView.builder(
-                  scrollDirection: Axis.vertical,
-                  shrinkWrap: true,
-                  itemCount: employee.payments.length,
-                  itemBuilder: (context, i) => _crearItem(context, employee.payments[i]),
-                )
-              ],
-            ),
-          );
-        } else {
-          return Center(child: CircularProgressIndicator());
-        }
-      },
-    );
-  }
-
 
   _crearItem(BuildContext context, PaymentModel payment) {
     return Card(

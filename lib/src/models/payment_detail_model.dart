@@ -18,8 +18,8 @@ class PaymentDetailModel
   {
     id = json['id'];
     concepto = json['concepto'];
-    montoHaberDescuento = double.parse(json['monto_haber_descuento']);
-    tipoHaberDescuento = json['tipo_haber_descuento'];
-    paymentId = json['payment_id'];
+    montoHaberDescuento = double.parse(json['monto']);
+    tipoHaberDescuento = json['tipo'];
+    paymentId = json['pago_id'];
   }
 }

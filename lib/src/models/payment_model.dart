@@ -6,6 +6,8 @@ class PaymentModel
   int anio;
   int mes;
   double monto;
+  double haberes;
+  double descuentos;
   int companyId;
   String employeeId;
   int zonaId;
@@ -16,6 +18,8 @@ class PaymentModel
     this.anio,
     this.mes,
     this.monto,
+    this.haberes,
+    this.descuentos,
     this.companyId,
     this.employeeId,
     this.zonaId,
@@ -31,8 +35,10 @@ class PaymentModel
       anio: json['anio'],
       mes: json['mes'],
       monto: double.parse(json['monto']),
-      companyId: json['company_id'],
-      employeeId: json['employee_id'],
+      haberes: double.parse(json['haberes']),
+      descuentos: double.parse(json['descuentos']),
+      companyId: json['empresa_id'],
+      employeeId: json['trabajador_id'],
       zonaId: json['zona_id'],
       details: paymentsDetailList
     );
