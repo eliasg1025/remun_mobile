@@ -7,9 +7,7 @@ class EmployeeModel
   String nombre;
   String apellidoPaterno;
   String apellidoMaterno;
-  String banco;
-  String numeroCuenta;
-  List<PaymentModel> payments;
+  PaymentModel payment;
   List<TarjaModel> tarja;
 
   EmployeeModel({
@@ -17,16 +15,17 @@ class EmployeeModel
     this.nombre,
     this.apellidoPaterno,
     this.apellidoMaterno,
-    this.banco,
-    this.numeroCuenta,
-    this.payments,
+    this.payment,
     this.tarja
   });
 
   factory EmployeeModel.fromJsonMap(Map<String, dynamic> json)
   {
-    var list = json['payments'] as List;
-    List<PaymentModel> paymentsList = list.map((i) => PaymentModel.fromJsonMap(i)).toList();
+    /*
+    var list = json['payment'] as List;
+    List<PaymentModel> paymentsList = list.map((i) => PaymentModel.fromJsonMap(i)).toList();*/
+
+    PaymentModel payment = PaymentModel.fromJsonMap(json['payment']);
 
     var list1 = json['tarja'] as List;
     List<TarjaModel> tarjaList = list1.map((i) => TarjaModel.fromJson(i)).toList();
@@ -36,9 +35,7 @@ class EmployeeModel
         nombre: json['nombre'],
         apellidoPaterno: json['apellido_paterno'],
         apellidoMaterno: json['apellido_materno'],
-        banco: json['banco'],
-        numeroCuenta: json['numero_cuenta'],
-        payments: paymentsList,
+        payment: payment,
         tarja: tarjaList
     );
   }

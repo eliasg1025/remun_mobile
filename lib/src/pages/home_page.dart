@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:remun_mobile/src/bloc/provider.dart';
 import 'package:remun_mobile/src/models/employee_model.dart';
@@ -21,6 +22,7 @@ class HomePage extends StatelessWidget
     employeeProvider.cargarPagos();
 
     return Scaffold(
+      backgroundColor: Color(0xFFF5F5F5),
       body: Stack(
         children: [
           _crearFondo(context),
@@ -29,9 +31,7 @@ class HomePage extends StatelessWidget
             builder: (BuildContext context, AsyncSnapshot<EmployeeModel> snapshot) {
               if (snapshot.hasData) {
                 final employee = snapshot.data;
-
-                final currentPayment = employee.payments[0];
-
+                final currentPayment = employee.payment;
 
                 return SafeArea(
                   child: SingleChildScrollView(
@@ -57,9 +57,19 @@ class HomePage extends StatelessWidget
                               ],
                             ),
                           ),
-                          SizedBox(height: 40,),
+                          SizedBox(height: 20,),
                           _crearTarjeta(context, currentPayment),
-                          SizedBox(height: 40,),
+                          SizedBox(height: 20,),
+                          _crearTarjetaInfoTrabajador(context, employee),
+                          SizedBox(height: 20,),
+                          Column(
+                            children: [
+                              Container(
+                                child: _crearGrilla(context, employee.tarja),
+                              )
+                            ],
+                          ),
+                          SizedBox(height: 20,),
                           Container(
                             child: Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -69,14 +79,7 @@ class HomePage extends StatelessWidget
                               ],
                             ),
                           ),
-                          SizedBox(height: 50,),
-                          Column(
-                            children: [
-                              Container(
-                                child: _crearGrilla(context, employee.tarja),
-                              )
-                            ],
-                          )
+                          SizedBox(height: 50,)
                         ],
                       ),
                     ),
@@ -138,7 +141,7 @@ class HomePage extends StatelessWidget
                 children: [
                   Text('${ tarjaModel.fecha }',
                     style: TextStyle(
-                      fontSize: 8.5
+                      fontSize: 8
                     ),
                   ),
                   SizedBox(height: 5,),
@@ -180,21 +183,28 @@ class HomePage extends StatelessWidget
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Icon(
-                  Icons.menu,
-                  color: Colors.white,
+                SizedBox(
+                  width: 50.0,
+                  child: RaisedButton(
+                      color: Colors.white,
+                      onPressed: () => print('hi'),
+                      child: Icon(
+                        Icons.menu,
+                        color: Colors.blueAccent,
+                      ),
+                  ),
                 ),
-                Text('PAGOS',
-                    style: TextStyle(
-                        fontSize: 18.0,
-                        fontWeight: FontWeight.w600,
-                        color: Colors.white
-                    )
+                SizedBox(
+                  width: 50.0,
+                  child: RaisedButton(
+                    color: Colors.white,
+                    onPressed: () => print('hi'),
+                    child: Icon(
+                      Icons.calendar_today,
+                      color: Colors.blueAccent,
+                    ),
+                  ),
                 ),
-                Icon(
-                  Icons.calendar_today,
-                  color: Colors.white,
-                )
               ],
             ),
           ],
@@ -204,19 +214,21 @@ class HomePage extends StatelessWidget
   }
 
   _crearTarjeta(BuildContext context, PaymentModel payment) {
+
+    final formatCurrency = new NumberFormat("#,##0.00", "en_US");
+
     return Container(
       child: ClipRRect(
         borderRadius: BorderRadius.all(Radius.circular(15)),
         child: Container(
           width: MediaQuery.of(context).size.width * 0.75,
           height: MediaQuery.of(context).size.height * .22,
-          //color: Colors.white,
           decoration: BoxDecoration(
               color: Colors.white,
               borderRadius: BorderRadius.circular(5.0),
               boxShadow: <BoxShadow>[
                 BoxShadow(
-                  color: Colors.black38,
+                  color: Colors.black,
                   blurRadius: 3.0,
                   offset: Offset(0.0, 5.0),
                   spreadRadius: 3.0,
@@ -231,7 +243,7 @@ class HomePage extends StatelessWidget
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
                   Text(
-                    'Anticipo',
+                    '${ payment.paymentType.descripcion }',
                     style: TextStyle(
                       fontSize: 20,
                       fontWeight: FontWeight.w600,
@@ -243,7 +255,7 @@ class HomePage extends StatelessWidget
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       Text(
-                        'S/. ${ payment.monto }',
+                        'S/. ${ formatCurrency.format(payment.monto) }',
                         style: GoogleFonts.muli(
                           textStyle: Theme.of(context).textTheme.display1,
                           fontSize: 45,
@@ -255,22 +267,85 @@ class HomePage extends StatelessWidget
                   ),
                 ],
               ),
-              Positioned(
-                left: -170,
-                top: -170,
-                child: CircleAvatar(
-                  radius: 130,
-                  backgroundColor: Color(0xfEF7F7F7),
-                ),
-              ),
-              Positioned(
-                left: -160,
-                top: -190,
-                child: CircleAvatar(
-                  radius: 130,
-                  backgroundColor: Color(0xffF3F3F3),
-                ),
-              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  _crearTarjetaInfoTrabajador(BuildContext context, EmployeeModel employee) {
+
+    return Container(
+      child: ClipRRect(
+        borderRadius: BorderRadius.all(Radius.circular(10)),
+        child: Container(
+          width: MediaQuery.of(context).size.width * 0.75,
+          height: MediaQuery.of(context).size.height * .25,
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(5.0)
+          ),
+          child: Stack(
+            fit: StackFit.expand,
+            children: [
+                  Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 17, vertical: 20),
+                    child: Column(
+                      children: [
+                        Column(
+                          children: [
+                            Text('DATOS PERSONALES',
+                              style: TextStyle(
+                                fontWeight: FontWeight.w700,
+                              ),
+                            )
+                          ],
+                        ),
+                        SizedBox(height: 15,),
+                        SingleChildScrollView(
+                          scrollDirection: Axis.horizontal,
+                          child: Row(
+                            children: [
+                              Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text('DNI:', style: TextStyle(fontWeight: FontWeight.w500),),
+                                  SizedBox(height: 5,),
+                                  Text('Nombre:', style: TextStyle(fontWeight: FontWeight.w500),),
+                                  SizedBox(height: 5,),
+                                  Text('Banco:', style: TextStyle(fontWeight: FontWeight.w500),),
+                                  SizedBox(height: 5,),
+                                  Text('N° Cuenta:', style: TextStyle(fontWeight: FontWeight.w500),),
+                                  SizedBox(height: 5,),
+                                  Text('Fecha Ingreso:', style: TextStyle(fontWeight: FontWeight.w500),),
+                                  SizedBox(height: 5,),
+                                  Text('Asig. Familiar:', style: TextStyle(fontWeight: FontWeight.w500),),
+                                ],
+                              ),
+                              SizedBox(width: 10,),
+                              Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text('${ employee.id }'),
+                                  SizedBox(height: 5,),
+                                  Text('${ employee.nombre } ${ employee.apellidoPaterno } ${ employee.apellidoMaterno }'),
+                                  SizedBox(height: 5,),
+                                  Text('${ employee.payment.banco }'),
+                                  SizedBox(height: 5,),
+                                  Text('${ employee.payment.numeroCuenta }'),
+                                  SizedBox(height: 5,),
+                                  Text('${ formatDate(employee.payment.fechaIngreso) }'),
+                                  SizedBox(height: 5,),
+                                  Text('${ employee.payment.hasAsignacionFamiliar() }'),
+                                ],
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
+                    )
+                  ),
             ],
           ),
         ),
@@ -288,35 +363,27 @@ class HomePage extends StatelessWidget
         borderRadius: BorderRadius.all(Radius.circular(10)),
         child: Container(
           width: MediaQuery.of(context).size.width * 0.77 / 2.2,
-          height: MediaQuery.of(context).size.height * .28 / 2.2,
-          decoration: BoxDecoration(
-              color: colorFondo,
-              borderRadius: BorderRadius.circular(5.0),
-              boxShadow: <BoxShadow>[
-                BoxShadow(
-                  color: Colors.black38,
-                  blurRadius: 3.0,
-                  offset: Offset(0.0, 5.0),
-                  spreadRadius: 5.0,
-                )
-              ]
-          ),
-          child: Stack(
-            fit: StackFit.expand,
-            children: [
-              Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  Text(
-                    '${titulo}',
-                    style: TextStyle(
-                      fontSize: 15,
-                      color: Colors.white,
-                      fontWeight: FontWeight.w500
+          height: MediaQuery.of(context).size.height * .20 / 2.2,
+          child: RaisedButton(
+            onPressed: () => print('hi'),
+            color: colorFondo,
+            child: Stack(
+              fit: StackFit.expand,
+              children: [
+                Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    Text(
+                      '$titulo',
+                      style: TextStyle(
+                          fontSize: 15,
+                          color: Colors.white,
+                          fontWeight: FontWeight.w500
+                      ),
                     ),
-                  ),
-                  SizedBox(height: 10,),
+                    //SizedBox(height: 10,),
+                    /*
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
@@ -330,52 +397,32 @@ class HomePage extends StatelessWidget
                       )
                     ],
                   ),
-                  SizedBox(height: 10,),
-                  Container(
-                    padding: EdgeInsets.symmetric(horizontal: 2, vertical: 2),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Icon(
-                          Icons.zoom_in,
-                          color: Colors.white,
-                        ),
-                        SizedBox(width: 5,),
-                        Text('Ver Detalle',
-                          style: TextStyle(color: Colors.white, fontSize: 10),
-                        )
-                      ],
-                    ),
-                  )
-                ],
-              )
-            ],
+                  SizedBox(height: 10,),*/
+                    Container(
+                      padding: EdgeInsets.symmetric(horizontal: 2, vertical: 2),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Icon(
+                            Icons.zoom_in,
+                            color: Colors.white,
+                          ),
+                          SizedBox(width: 5,),
+                          Text('Ver Detalle',
+                            style: TextStyle(color: Colors.white, fontSize: 10),
+                          )
+                        ],
+                      ),
+                    )
+                  ],
+                )
+              ],
+            ),
           ),
         ),
       ),
     );
-  }
 
-  _crearItem(BuildContext context, PaymentModel payment) {
-    return Card(
-      child: Column(
-        children: <Widget>[
-          Padding(
-            padding: EdgeInsets.all(8.0),
-            child: ListTile(
-              title: Text('SUELDO ${ obtenerMes(payment.mes) } ${ payment.anio }'),
-              subtitle: Text('S/. ${ payment.monto.toString() }'),
-              contentPadding: EdgeInsets.symmetric(vertical: 20.0),
-            ),
-          ),
-          Column(
-            children: <Widget>[
-              for(var item in payment.details) Text('${ item.concepto } --- ${ item.montoHaberDescuento } --- ${ item.tipoHaberDescuento }')
-            ],
-          )
-        ],
-      )
-    );
   }
 
   _crearBoton(BuildContext context) {

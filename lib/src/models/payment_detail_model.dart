@@ -2,15 +2,15 @@ class PaymentDetailModel
 {
   int id;
   String concepto;
-  double montoHaberDescuento;
-  String tipoHaberDescuento;
+  double monto;
+  int tipo;
   int paymentId;
 
   PaymentDetailModel({
     this.id,
     this.concepto,
-    this.montoHaberDescuento,
-    this.tipoHaberDescuento,
+    this.monto,
+    this.tipo,
     this.paymentId
   });
 
@@ -18,8 +18,8 @@ class PaymentDetailModel
   {
     id = json['id'];
     concepto = json['concepto'];
-    montoHaberDescuento = double.parse(json['monto']);
-    tipoHaberDescuento = json['tipo'];
+    monto = json['monto'] + 0.0;
+    tipo = json['tipo'];
     paymentId = json['pago_id'];
   }
 }

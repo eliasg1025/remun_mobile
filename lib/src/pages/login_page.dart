@@ -59,12 +59,13 @@ class LoginPage extends StatelessWidget
                 _crearUsername(bloc),
                 SizedBox(height: 15.0),
                 _crearPassword(bloc),
-                SizedBox(height: 15.0),
+                SizedBox(height: 30.0),
                 _crearBoton(bloc),
                 SizedBox(height: 15.0),
               ],
             ),
           ),
+          /*
           Container(
             width: size.width * 0.85,
             child: RaisedButton(
@@ -81,7 +82,7 @@ class LoginPage extends StatelessWidget
                 Navigator.push(context, MaterialPageRoute(builder: (context) => LoginQrPage()));
               },
             ),
-          ),
+          ),*/
           SizedBox(height: 100.0,)
         ],
       ),
@@ -99,8 +100,8 @@ class LoginPage extends StatelessWidget
             keyboardType: TextInputType.text,
             decoration: InputDecoration(
               icon: Icon(Icons.supervised_user_circle, color: Colors.blueAccent),
-              hintText: 'Ej: 12345678',
-              labelText: 'Ingrese DNI / CE',
+              //hintText: 'Ej: 12345678',
+              labelText: 'Ingrese Nombre de Usuario',
               counterText: snapshot.data,
               errorText: snapshot.error
             ),
@@ -157,10 +158,11 @@ class LoginPage extends StatelessWidget
   }
 
   _login(LoginBloc bloc, BuildContext context) async {
+    /*
     print('==================');
     print('Email: ${ bloc.email }');
     print('Password: ${ bloc.password }');
-    print('==================');
+    print('==================');*/
 
     Map info = await userProvider.login(bloc.email, bloc.password);
 

@@ -20,7 +20,7 @@ class UserProvider
 
     Map<String, dynamic> decodedResp = json.decode(resp.body);
 
-    print(decodedResp);
+    //print(decodedResp);
 
     if (decodedResp.containsKey('token')) {
       _prefs.token = decodedResp['token'];

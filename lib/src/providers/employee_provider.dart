@@ -10,7 +10,7 @@ class EmployeeProvider
   final _prefs = new PreferenciasUsuario();
 
   Future<EmployeeModel> cargarPagos() async {
-    final url = '$_url/employees';
+    final url = '$_url/employees/72437334/payment?period=2020-09&paymentTypeId=1';
     final resp = await http.get(
       url,
       headers: {
@@ -20,7 +20,7 @@ class EmployeeProvider
 
     final Map<String, dynamic> decodedData = json.decode(resp.body);
 
-    print(decodedData);
+    //print(decodedData);
 
     final EmployeeModel employee = EmployeeModel.fromJsonMap(decodedData);
 

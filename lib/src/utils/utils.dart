@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 
 String obtenerMes(int mes) {
   switch (mes) {
@@ -28,6 +29,8 @@ String obtenerMes(int mes) {
       return 'DICIEMBRE';
   }
 }
+
+String formatDate(DateTime date) => new DateFormat("dd/MM/yyyy").format(date);
 
 void mostrarAlerta(BuildContext context, String message) {
   showDialog(
