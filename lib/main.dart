@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:remun_mobile/src/bloc/provider.dart';
 import 'package:remun_mobile/src/pages/home_page.dart';
 import 'package:remun_mobile/src/pages/login_page.dart';
-import 'package:remun_mobile/src/pages/welcome_page.dart';
+import 'package:remun_mobile/src/pages/search_page.dart';
 import 'package:remun_mobile/src/preferencias_usuario/preferencias_usuario.dart';
 
 void main() async {
@@ -27,7 +26,8 @@ class MyApp extends StatelessWidget
         initialRoute: 'login',
         routes: {
           'login': (BuildContext context) => LoginPage(),
-          'home': (BuildContext context) => HomePage()
+          'home': (BuildContext context) => HomePage(),
+          'search': (BuildContext context) => SearchPage(),
         },
       ),
     );

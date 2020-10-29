@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:remun_mobile/src/bloc/provider.dart';
-import 'package:remun_mobile/src/pages/home_page.dart';
-import 'package:remun_mobile/src/pages/login_qr_page.dart';
 import 'package:remun_mobile/src/providers/users_provider.dart';
 import 'package:remun_mobile/src/utils/utils.dart';
 
@@ -102,7 +100,7 @@ class LoginPage extends StatelessWidget
               icon: Icon(Icons.supervised_user_circle, color: Colors.blueAccent),
               //hintText: 'Ej: 12345678',
               labelText: 'Ingrese Nombre de Usuario',
-              counterText: snapshot.data,
+              //counterText: snapshot.data,
               errorText: snapshot.error
             ),
             onChanged: (value) => bloc.changeEmail(value),
@@ -124,7 +122,7 @@ class LoginPage extends StatelessWidget
               decoration: InputDecoration(
                 icon: Icon(Icons.lock, color: Colors.blueAccent),
                 labelText: 'Contraseña',
-                counterText: snapshot.data,
+                //counterText: snapshot.data,
                 errorText: snapshot.error
               ),
               onChanged: (value) => bloc.changePassword(value),
@@ -167,7 +165,7 @@ class LoginPage extends StatelessWidget
     Map info = await userProvider.login(bloc.email, bloc.password);
 
     if ( info['ok'] ) {
-      Navigator.pushReplacementNamed(context, 'home');
+      Navigator.pushReplacementNamed(context, 'search');
     } else {
       mostrarAlerta(context, info['message']);
     }

@@ -9,8 +9,8 @@ class EmployeeProvider
   final String _url = 'http://209.151.144.74/api';
   final _prefs = new PreferenciasUsuario();
 
-  Future<EmployeeModel> cargarPagos() async {
-    final url = '$_url/employees/72437334/payment?period=2020-09&paymentTypeId=1';
+  Future<EmployeeModel> cargarPagos(String rut, String periodo, int tipoPagoId) async {
+    final url = '$_url/employees/$rut/payment?period=$periodo&paymentTypeId=$tipoPagoId';
     final resp = await http.get(
       url,
       headers: {
@@ -18,12 +18,16 @@ class EmployeeProvider
       }
     );
 
-    final Map<String, dynamic> decodedData = json.decode(resp.body);
+    try {
+      final Map<String, dynamic> decodedData = json.decode(resp.body);
 
-    //print(decodedData);
+      print(decodedData);
 
-    final EmployeeModel employee = EmployeeModel.fromJsonMap(decodedData);
+      final EmployeeModel employee = EmployeeModel.fromJsonMap(decodedData);
 
-    return employee;
+      return employee;
+    } catch (e) {
+      return null;
+    }
   }
 }

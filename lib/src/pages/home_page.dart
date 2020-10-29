@@ -3,6 +3,7 @@ import 'package:intl/intl.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:remun_mobile/src/bloc/provider.dart';
 import 'package:remun_mobile/src/models/employee_model.dart';
+import 'package:remun_mobile/src/models/payment_detail_model.dart';
 import 'package:remun_mobile/src/models/payment_model.dart';
 import 'package:remun_mobile/src/models/tarja_model.dart';
 import 'package:remun_mobile/src/providers/employee_provider.dart';
@@ -17,17 +18,22 @@ class HomePage extends StatelessWidget
   @override
   Widget build(BuildContext context) {
 
-    final bloc = Provider.of(context);
+    final bloc = Provider.ofS(context);
 
-    employeeProvider.cargarPagos();
+    //employeeProvider.cargarPagos('72437334', '2020-09', 1);
 
     return Scaffold(
       backgroundColor: Color(0xFFF5F5F5),
+      appBar: AppBar(
+        title: Text('Consulta Sueldos'),
+        backgroundColor: Colors.blueAccent[400],
+        shadowColor: Colors.white10,
+      ),
       body: Stack(
         children: [
           _crearFondo(context),
           FutureBuilder(
-            future: employeeProvider.cargarPagos(),
+            future: employeeProvider.cargarPagos(bloc.rut, bloc.periodo, 1),
             builder: (BuildContext context, AsyncSnapshot<EmployeeModel> snapshot) {
               if (snapshot.hasData) {
                 final employee = snapshot.data;
@@ -41,7 +47,7 @@ class HomePage extends StatelessWidget
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          SizedBox(height: 80),
+                          SizedBox(height: 30),
                           Container(
                             child: Row(
                               mainAxisAlignment: MainAxisAlignment.center,
@@ -53,6 +59,15 @@ class HomePage extends StatelessWidget
                                       fontSize: 25,
                                       fontWeight: FontWeight.w600
                                   ),
+                                ),
+                                //SizedBox(width: 5,),
+                                Expanded(
+                                  child: FlatButton(
+                                    onPressed: () => _settingModalCalendar(context),
+                                    child: Icon(Icons.calendar_today,
+                                      color: Colors.white,
+                                    ),
+                                ),
                                 ),
                               ],
                             ),
@@ -93,7 +108,38 @@ class HomePage extends StatelessWidget
         ],
       ),
       drawer: Drawer(
-        child: Text('hi'),
+        child: ListView(
+          padding: EdgeInsets.zero,
+          children: <Widget>[
+            DrawerHeader(
+              child: Image(image: AssetImage('assets/logos/grupo-verfrut.png'), height: 100.0,),
+              decoration: BoxDecoration(
+                color: Colors.blueAccent
+              ),
+            ),
+            ListTile(
+              title: Row(
+                children: [
+                  Icon(Icons.monetization_on),
+                  SizedBox(width: 10,),
+                  Text('Consulta Sueldos'),
+                ],
+              ),
+              onTap: () => Navigator.pushNamed(context, 'search'),
+            ),
+            Divider(height: 5, color: Colors.black26,),
+            ListTile(
+              title: Row(
+                children: [
+                  Icon(Icons.power_settings_new),
+                  SizedBox(width: 10,),
+                  Text('Cerrar Sesión'),
+                ],
+              ),
+              onTap: ()=> Navigator.pushNamed(context, 'login')
+            ),
+          ],
+        )
       ),
       floatingActionButton: _crearBoton(context),
     );
@@ -185,6 +231,7 @@ class HomePage extends StatelessWidget
               children: [
                 SizedBox(
                   width: 50.0,
+                  /*
                   child: RaisedButton(
                       color: Colors.white,
                       onPressed: () => print('hi'),
@@ -192,10 +239,11 @@ class HomePage extends StatelessWidget
                         Icons.menu,
                         color: Colors.blueAccent,
                       ),
-                  ),
+                  ),*/
                 ),
                 SizedBox(
                   width: 50.0,
+                  /*
                   child: RaisedButton(
                     color: Colors.white,
                     onPressed: () => print('hi'),
@@ -204,6 +252,7 @@ class HomePage extends StatelessWidget
                       color: Colors.blueAccent,
                     ),
                   ),
+                   */
                 ),
               ],
             ),
@@ -281,7 +330,7 @@ class HomePage extends StatelessWidget
         borderRadius: BorderRadius.all(Radius.circular(10)),
         child: Container(
           width: MediaQuery.of(context).size.width * 0.75,
-          height: MediaQuery.of(context).size.height * .25,
+          height: MediaQuery.of(context).size.height * .28,
           decoration: BoxDecoration(
             color: Colors.white,
             borderRadius: BorderRadius.circular(5.0)
@@ -314,11 +363,13 @@ class HomePage extends StatelessWidget
                                   SizedBox(height: 5,),
                                   Text('Nombre:', style: TextStyle(fontWeight: FontWeight.w500),),
                                   SizedBox(height: 5,),
+                                  Text('Empresa:', style: TextStyle(fontWeight: FontWeight.w500),),
+                                  SizedBox(height: 5,),
+                                  Text('Fecha Ingreso:', style: TextStyle(fontWeight: FontWeight.w500),),
+                                  SizedBox(height: 5,),
                                   Text('Banco:', style: TextStyle(fontWeight: FontWeight.w500),),
                                   SizedBox(height: 5,),
                                   Text('N° Cuenta:', style: TextStyle(fontWeight: FontWeight.w500),),
-                                  SizedBox(height: 5,),
-                                  Text('Fecha Ingreso:', style: TextStyle(fontWeight: FontWeight.w500),),
                                   SizedBox(height: 5,),
                                   Text('Asig. Familiar:', style: TextStyle(fontWeight: FontWeight.w500),),
                                 ],
@@ -331,13 +382,36 @@ class HomePage extends StatelessWidget
                                   SizedBox(height: 5,),
                                   Text('${ employee.nombre } ${ employee.apellidoPaterno } ${ employee.apellidoMaterno }'),
                                   SizedBox(height: 5,),
+                                  Text('${ employee.payment.companyId == 9 ? 'RAPEL' : 'VERFRUT' }',
+                                    style: TextStyle(
+                                      fontWeight: FontWeight.w700
+                                    ),
+                                  ),
+                                  SizedBox(height: 5,),
+                                  Text('${ formatDate(employee.payment.fechaIngreso) }'),
+                                  SizedBox(height: 5,),
                                   Text('${ employee.payment.banco }'),
                                   SizedBox(height: 5,),
                                   Text('${ employee.payment.numeroCuenta }'),
                                   SizedBox(height: 5,),
-                                  Text('${ formatDate(employee.payment.fechaIngreso) }'),
-                                  SizedBox(height: 5,),
-                                  Text('${ employee.payment.hasAsignacionFamiliar() }'),
+                                  Row(
+                                    children: [
+                                      employee.payment.hasAsignacionFamiliar() == 'NO TIENE' ?
+                                      Icon(
+                                        Icons.close,
+                                        color: Colors.red,
+                                      ) :
+                                      Icon(
+                                        Icons.check,
+                                        color: Colors.green,
+                                      ),
+                                      Text('${ employee.payment.hasAsignacionFamiliar() }',
+                                        style: TextStyle(
+                                          fontWeight: FontWeight.w700
+                                        ),
+                                      ),
+                                    ],
+                                  )
                                 ],
                               ),
                             ],
@@ -365,7 +439,7 @@ class HomePage extends StatelessWidget
           width: MediaQuery.of(context).size.width * 0.77 / 2.2,
           height: MediaQuery.of(context).size.height * .20 / 2.2,
           child: RaisedButton(
-            onPressed: () => print('hi'),
+            onPressed: () => _settingModalBottomSheet(context, ingresos, payment),
             color: colorFondo,
             child: Stack(
               fit: StackFit.expand,
@@ -425,11 +499,115 @@ class HomePage extends StatelessWidget
 
   }
 
+  _settingModalCalendar(BuildContext context) {
+    showModalBottomSheet(
+        context: context,
+        builder: (BuildContext bc) {
+          return Container(
+            child: new Wrap(
+              children: [
+                Container(
+                  padding: EdgeInsets.symmetric(vertical: 20, horizontal: 30),
+                  child: Column(
+                    children: [
+                      ListTile(
+                          leading: new Icon(Icons.calendar_today),
+                          title: new Text('PAGOS'),
+                          onTap: () => {}
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          );
+        }
+    );
+  }
+
+  _settingModalBottomSheet(BuildContext context, int esIngreso, PaymentModel paymentModel) {
+
+    List<PaymentDetailModel> details = paymentModel.details.where((e) => e.tipo == esIngreso).toList();
+    String tipoDetalle = esIngreso == 1 ? 'Haberes' : 'Descuentos';
+    double totalDetalle = details.fold(0, (value, element) => value + element.monto);
+
+    showModalBottomSheet(
+      context: context,
+      builder: (BuildContext bc) {
+        return Container(
+          child: new Wrap(
+            children: [
+              Container(
+                padding: EdgeInsets.symmetric(vertical: 20, horizontal: 30),
+                child: Column(
+                  children: [
+                    Row(
+                      children: [
+                        Icon(Icons.monetization_on,
+                          color: Colors.amber,
+                        ),
+                        SizedBox(width: 10,),
+                        Icon(esIngreso == 1 ? Icons.add : Icons.remove,
+                          color: esIngreso == 1 ? Colors.green : Colors.red,
+                        ),
+                        Text(tipoDetalle)
+                      ],
+                    ),
+                    SizedBox(height: 15,),
+                    Column(
+                      children: details.map((item) => Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text('${ item.concepto }',
+                            style: TextStyle(
+                                fontSize: 12
+                            ),
+                          ),
+                          Text('S/. ${ item.monto }',
+                            style: TextStyle(
+                                fontSize: 15,
+                                fontWeight: FontWeight.w600
+                            ),
+                          )
+                        ],
+                      )).toList(),
+                    ),
+                    Text('__________________________________________________'),
+                    SizedBox(height: 15,),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text('TOTAL',
+                          style: TextStyle(
+                              fontSize: 17,
+                              fontWeight: FontWeight.w700,
+                          ),
+                        ),
+                        Text('S/. ${ totalDetalle.toStringAsFixed(2) }',
+                          style: TextStyle(
+                            fontSize: 17,
+                            fontWeight: FontWeight.w700,
+                            color: Colors.blueGrey
+                          ),
+                        ),
+                      ],
+                    ),
+                    SizedBox(height: 20,)
+                  ],
+                ),
+              ),
+            ],
+          ),
+        );
+      }
+    );
+  }
+
   _crearBoton(BuildContext context) {
     return FloatingActionButton(
       child: Icon( Icons.exit_to_app ),
       backgroundColor: Colors.blueAccent,
-      onPressed: ()=> Navigator.pushNamed(context, 'login'),
+      onPressed: ()=> Navigator.pushNamed(context, 'search'),
     );
   }
 }

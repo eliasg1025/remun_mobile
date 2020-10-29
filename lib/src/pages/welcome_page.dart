@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:remun_mobile/src/pages/login_page.dart';
-import 'package:remun_mobile/src/pages/login_qr_page.dart';
+import 'package:remun_mobile/src/pages/search_page.dart';
 
 class WelcomePage extends StatefulWidget
 {
@@ -53,7 +53,7 @@ class _WelcomePageState extends State<WelcomePage>
     return InkWell(
       onTap: () {
         Navigator.push(
-            context, MaterialPageRoute(builder: (context) => LoginQrPage()));
+            context, MaterialPageRoute(builder: (context) => SearchPage()));
       },
       child: Container(
         width: MediaQuery.of(context).size.width,
