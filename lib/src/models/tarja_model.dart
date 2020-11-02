@@ -2,7 +2,7 @@
 class TarjaModel
 {
   String fecha;
-  double horas;
+  String horas;
 
   TarjaModel({
     this.fecha,
@@ -12,6 +12,6 @@ class TarjaModel
   TarjaModel.fromJson(Map<String, dynamic> json)
   {
     fecha = json['fecha'];
-    horas = double.parse(json['horas'].toString());
+    horas = json['horas'].toString();
   }
 }

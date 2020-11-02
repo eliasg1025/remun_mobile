@@ -9,7 +9,19 @@ import 'package:remun_mobile/src/models/tarja_model.dart';
 import 'package:remun_mobile/src/providers/employee_provider.dart';
 import 'package:remun_mobile/src/utils/utils.dart';
 
-class HomePage extends StatelessWidget
+
+class HomePage extends StatefulWidget
+{
+  EmployeeModel employee;
+  HomePage({
+    this.employee
+  });
+
+  @override
+  HomePageState createState() => HomePageState();
+}
+
+class HomePageState extends State<HomePage>
 {
   static String name = 'home';
 
@@ -19,8 +31,6 @@ class HomePage extends StatelessWidget
   Widget build(BuildContext context) {
 
     final bloc = Provider.ofS(context);
-
-    //employeeProvider.cargarPagos('72437334', '2020-09', 1);
 
     return Scaffold(
       backgroundColor: Color(0xFFF5F5F5),
@@ -32,6 +42,8 @@ class HomePage extends StatelessWidget
       body: Stack(
         children: [
           _crearFondo(context),
+          _crearMainComponent(context, widget.employee)
+          /*
           FutureBuilder(
             future: employeeProvider.cargarPagos(bloc.rut, bloc.periodo, 1),
             builder: (BuildContext context, AsyncSnapshot<EmployeeModel> snapshot) {
@@ -39,72 +51,12 @@ class HomePage extends StatelessWidget
                 final employee = snapshot.data;
                 final currentPayment = employee.payment;
 
-                return SafeArea(
-                  child: SingleChildScrollView(
-                    child: Container(
-                      padding: EdgeInsets.symmetric(horizontal: 20),
-                      margin: EdgeInsets.symmetric(horizontal: 30),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          SizedBox(height: 30),
-                          Container(
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                Text(
-                                  '${ obtenerMes(currentPayment.mes) } ${ currentPayment.anio }',
-                                  style: TextStyle(
-                                      color: Colors.white,
-                                      fontSize: 25,
-                                      fontWeight: FontWeight.w600
-                                  ),
-                                ),
-                                //SizedBox(width: 5,),
-                                Expanded(
-                                  child: FlatButton(
-                                    onPressed: () => _settingModalCalendar(context),
-                                    child: Icon(Icons.calendar_today,
-                                      color: Colors.white,
-                                    ),
-                                ),
-                                ),
-                              ],
-                            ),
-                          ),
-                          SizedBox(height: 20,),
-                          _crearTarjeta(context, currentPayment),
-                          SizedBox(height: 20,),
-                          _crearTarjetaInfoTrabajador(context, employee),
-                          SizedBox(height: 20,),
-                          Column(
-                            children: [
-                              Container(
-                                child: _crearGrilla(context, employee.tarja),
-                              )
-                            ],
-                          ),
-                          SizedBox(height: 20,),
-                          Container(
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                _crearTarjetasIngresosEgresos(context, 1, currentPayment),
-                                _crearTarjetasIngresosEgresos(context, 0, currentPayment)
-                              ],
-                            ),
-                          ),
-                          SizedBox(height: 50,)
-                        ],
-                      ),
-                    ),
-                  ),
-                );
+                return _crearMainComponent(context, employee);
               } else {
                 return Center(child: CircularProgressIndicator());
               }
             }
-          ),
+          ),*/
         ],
       ),
       drawer: Drawer(
@@ -142,6 +94,73 @@ class HomePage extends StatelessWidget
         )
       ),
       floatingActionButton: _crearBoton(context),
+    );
+  }
+
+  Widget _crearMainComponent(BuildContext context, EmployeeModel employee) {
+
+    final currentPayment = employee.payment;
+
+    return SafeArea(
+      child: SingleChildScrollView(
+        child: Container(
+          padding: EdgeInsets.symmetric(horizontal: 20),
+          margin: EdgeInsets.symmetric(horizontal: 30),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              SizedBox(height: 30),
+              Container(
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text(
+                      '${ obtenerMes(currentPayment.mes) } ${ currentPayment.anio }',
+                      style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 25,
+                          fontWeight: FontWeight.w600
+                      ),
+                    ),
+                    //SizedBox(width: 5,),
+                    Expanded(
+                      child: FlatButton(
+                        onPressed: () => _settingModalCalendar(context),
+                        child: Icon(Icons.calendar_today,
+                          color: Colors.white,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              SizedBox(height: 20,),
+              _crearTarjeta(context, currentPayment),
+              SizedBox(height: 20,),
+              _crearTarjetaInfoTrabajador(context, employee),
+              SizedBox(height: 20,),
+              Column(
+                children: [
+                  Container(
+                    child: _crearGrilla(context, employee.tarja),
+                  )
+                ],
+              ),
+              SizedBox(height: 20,),
+              Container(
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    _crearTarjetasIngresosEgresos(context, 1, currentPayment),
+                    _crearTarjetasIngresosEgresos(context, 0, currentPayment)
+                  ],
+                ),
+              ),
+              SizedBox(height: 50,)
+            ],
+          ),
+        ),
+      ),
     );
   }
 

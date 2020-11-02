@@ -5,8 +5,10 @@ import 'package:flutter/services.dart';
 import 'package:qrscan/qrscan.dart' as scanner;
 import 'package:remun_mobile/src/bloc/provider.dart';
 import 'package:remun_mobile/src/models/employee_model.dart';
+import 'package:remun_mobile/src/pages/home_page.dart';
 import 'package:remun_mobile/src/providers/employee_provider.dart';
 import 'package:remun_mobile/src/utils/utils.dart';
+import 'package:remun_mobile/src/widgets/drawer.dart';
 
 class SearchPage extends StatefulWidget
 {
@@ -22,13 +24,38 @@ class SearchPageState extends State<SearchPage>
   @override
   initState() {
     super.initState();
-}
+  }
 
   final employeeProvider = new EmployeeProvider();
   final _rutController = new TextEditingController();
 
   @override
   Widget build(BuildContext context) {
+    /*
+    return DefaultTabController(
+      length: 2,
+      child: Scaffold(
+        appBar: AppBar(
+          title: Text('Consulta Sueldos'),
+          backgroundColor: Colors.blueAccent[400],
+          shadowColor: Colors.white10,
+          bottom: TabBar(
+            tabs: [
+              Tab(icon: Icon(Icons.contacts), text: 'Consulta',),
+              Tab(icon: Icon(Icons.contacts), text: 'Crear Usuarios',)
+            ],
+          ),
+        ),
+        body: TabBarView(
+          children: [
+            _searchForm(context),
+            Text('bye')
+          ],
+        ),
+        drawer: _crearDrawer(context)
+      )
+    );
+    */
 
     return Scaffold(
       backgroundColor: Color(0xFFF5F5F5),
@@ -40,40 +67,7 @@ class SearchPageState extends State<SearchPage>
       body: new Center(
         child: _searchForm(context),
       ),
-      drawer: Drawer(
-          child: ListView(
-            padding: EdgeInsets.zero,
-            children: <Widget>[
-              DrawerHeader(
-                child: Image(image: AssetImage('assets/logos/grupo-verfrut.png'), height: 100.0,),
-                decoration: BoxDecoration(
-                    color: Colors.blueAccent
-                ),
-              ),
-              ListTile(
-                title: Row(
-                  children: [
-                    Icon(Icons.monetization_on),
-                    SizedBox(width: 10,),
-                    Text('Consulta Sueldos'),
-                  ],
-                ),
-                onTap: () => Navigator.pushNamed(context, 'search'),
-              ),
-              Divider(height: 5, color: Colors.black26,),
-              ListTile(
-                  title: Row(
-                    children: [
-                      Icon(Icons.power_settings_new),
-                      SizedBox(width: 10,),
-                      Text('Cerrar Sesión'),
-                    ],
-                  ),
-                  onTap: ()=> Navigator.pushNamed(context, 'login')
-              ),
-            ],
-          )
-      ),
+      drawer: buildDrawer(context)
     );
   }
 
@@ -266,7 +260,9 @@ class SearchPageState extends State<SearchPage>
 
     if (info != null) {
       // print(info);
-      Navigator.pushReplacementNamed(context, 'home');
+      Navigator.push(context, new MaterialPageRoute(
+          builder: (_) => new HomePage(employee: info,)
+      ));
     } else {
       mostrarAlerta(context, 'Pago no encontrado para este trabajador');
     }

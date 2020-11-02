@@ -10,7 +10,7 @@ class EmployeeProvider
   final _prefs = new PreferenciasUsuario();
 
   Future<EmployeeModel> cargarPagos(String rut, String periodo, int tipoPagoId) async {
-    final url = '$_url/employees/$rut/payment?period=$periodo&paymentTypeId=$tipoPagoId';
+    final url = '$_url/employees/$rut/payment?period=$periodo&paymentTypeId=$tipoPagoId&seguro=1';
     final resp = await http.get(
       url,
       headers: {
@@ -27,6 +27,7 @@ class EmployeeProvider
 
       return employee;
     } catch (e) {
+      print(e);
       return null;
     }
   }

@@ -49,3 +49,21 @@ void mostrarAlerta(BuildContext context, String message) {
     }
   );
 }
+
+void mostrarAlertaConTitulo(BuildContext context, String message, String titulo) {
+  showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: Text('$titulo'),
+          content: Text(message),
+          actions: <Widget>[
+            FlatButton(
+              child: Text('Ok'),
+              onPressed: () => Navigator.of(context).pop(),
+            )
+          ],
+        );
+      }
+  );
+}
