@@ -317,7 +317,7 @@ class HomePageState extends State<HomePage>
         borderRadius: BorderRadius.all(Radius.circular(10)),
         child: Container(
           width: MediaQuery.of(context).size.width * 0.75,
-          height: MediaQuery.of(context).size.height * .28,
+          height: MediaQuery.of(context).size.height * .31,
           decoration: BoxDecoration(
             color: Colors.white,
             borderRadius: BorderRadius.circular(5.0)
