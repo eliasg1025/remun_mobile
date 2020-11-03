@@ -8,6 +8,7 @@ import 'package:remun_mobile/src/models/payment_model.dart';
 import 'package:remun_mobile/src/models/tarja_model.dart';
 import 'package:remun_mobile/src/providers/employee_provider.dart';
 import 'package:remun_mobile/src/utils/utils.dart';
+import 'package:remun_mobile/src/widgets/drawer.dart';
 
 
 class HomePage extends StatefulWidget
@@ -59,40 +60,7 @@ class HomePageState extends State<HomePage>
           ),*/
         ],
       ),
-      drawer: Drawer(
-        child: ListView(
-          padding: EdgeInsets.zero,
-          children: <Widget>[
-            DrawerHeader(
-              child: Image(image: AssetImage('assets/logos/grupo-verfrut.png'), height: 100.0,),
-              decoration: BoxDecoration(
-                color: Colors.blueAccent
-              ),
-            ),
-            ListTile(
-              title: Row(
-                children: [
-                  Icon(Icons.monetization_on),
-                  SizedBox(width: 10,),
-                  Text('Consulta Sueldos'),
-                ],
-              ),
-              onTap: () => Navigator.pushNamed(context, 'search'),
-            ),
-            Divider(height: 5, color: Colors.black26,),
-            ListTile(
-              title: Row(
-                children: [
-                  Icon(Icons.power_settings_new),
-                  SizedBox(width: 10,),
-                  Text('Cerrar Sesión'),
-                ],
-              ),
-              onTap: ()=> Navigator.pushNamed(context, 'login')
-            ),
-          ],
-        )
-      ),
+      drawer: buildDrawer(context),
       floatingActionButton: _crearBoton(context),
     );
   }
@@ -206,7 +174,7 @@ class HomePageState extends State<HomePage>
                 children: [
                   Text('${ tarjaModel.fecha }',
                     style: TextStyle(
-                      fontSize: 8
+                      fontSize: 7
                     ),
                   ),
                   SizedBox(height: 5,),
@@ -476,21 +444,6 @@ class HomePageState extends State<HomePage>
                       ),
                     ),
                     //SizedBox(height: 10,),
-                    /*
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Text(
-                        '${ ingresos == 1 ? '+' : '-' } S/. ${ ingresos == 1 ? payment.haberes : payment.descuentos }',
-                        style: TextStyle(
-                            fontSize: 20,
-                            color: Colors.white,
-                            fontWeight: FontWeight.w500
-                        ),
-                      )
-                    ],
-                  ),
-                  SizedBox(height: 10,),*/
                     Container(
                       padding: EdgeInsets.symmetric(horizontal: 2, vertical: 2),
                       child: Row(
@@ -579,13 +532,16 @@ class HomePageState extends State<HomePage>
                         children: [
                           Text('${ item.concepto }',
                             style: TextStyle(
-                                fontSize: 12
+                                fontSize: item.concepto == '101 NETO A PAGO' ? 14 : 12,
+                                fontWeight: item.concepto == '101 NETO A PAGO' ? FontWeight.w700 : FontWeight.normal,
+                                color: item.concepto == '101 NETO A PAGO' ? Colors.blueGrey : Colors.black
                             ),
                           ),
                           Text('S/. ${ item.monto }',
                             style: TextStyle(
-                                fontSize: 15,
-                                fontWeight: FontWeight.w600
+                                fontSize: item.concepto == '101 NETO A PAGO' ? 17 : 15,
+                                fontWeight: item.concepto == '101 NETO A PAGO' ? FontWeight.w700 : FontWeight.w600,
+                                color: item.concepto == '101 NETO A PAGO' ? Colors.blueGrey : Colors.black
                             ),
                           )
                         ],

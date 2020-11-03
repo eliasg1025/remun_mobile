@@ -178,7 +178,7 @@ class SearchPageState extends State<SearchPage>
               color: Colors.blueAccent,
             ),
             value: bloc.periodo,
-            items: <String>['2020-09', '2020-10'].map((value) => DropdownMenuItem<String>(
+            items: <String>['2020-10', '2020-09'].map((value) => DropdownMenuItem<String>(
               value: value,
               child: Text(value),
             )).toList(),

@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:jwt_decoder/jwt_decoder.dart';
+import 'package:remun_mobile/src/models/employee_list_model.dart';
 import 'package:remun_mobile/src/models/user_list_model.dart';
 import 'package:remun_mobile/src/preferencias_usuario/preferencias_usuario.dart';
+import 'package:remun_mobile/src/providers/employee_provider.dart';
 import 'package:remun_mobile/src/providers/users_provider.dart';
 import 'package:remun_mobile/src/utils/utils.dart';
 
@@ -16,10 +18,13 @@ class UsersPageState extends State<UsersPage>
 {
   final _prefs = PreferenciasUsuario();
   final usersProvider = new UserProvider();
+  final employeeProvider = new EmployeeProvider();
 
   final usernameController = new TextEditingController();
   final passwordController = new TextEditingController();
   final rutController = new TextEditingController();
+
+  EmployeeListModel currentEmployee;
 
   @override
   initState() {
@@ -119,14 +124,16 @@ class UsersPageState extends State<UsersPage>
               ),
             ),
             _buildSearchTrabajador(context),
-            TextField(
+            TextFormField(
+              enabled: currentEmployee != null,
               keyboardType: TextInputType.text,
               controller: usernameController,
               decoration: InputDecoration(
                 labelText: 'Ingrese Nombre de Usuario',
               ),
             ),
-            TextField(
+            TextFormField(
+              enabled: currentEmployee != null,
               keyboardType: TextInputType.text,
               controller: passwordController,
               decoration: InputDecoration(
@@ -145,6 +152,7 @@ class UsersPageState extends State<UsersPage>
   }
 
   Widget _buildSearchTrabajador(BuildContext context) {
+
     return Row(
       children: [
         Container(
@@ -153,14 +161,15 @@ class UsersPageState extends State<UsersPage>
             keyboardType: TextInputType.visiblePassword,
             controller: rutController,
             decoration: InputDecoration(
-                labelText: 'Buscar por RUT'
+              labelText: 'Buscar por RUT',
+              counterText: currentEmployee?.toString()
             ),
           ),
         ),
         Container(
           width: 50,
           child: FlatButton(
-            onPressed: () => print('search'),
+            onPressed: () => _searchTrabajador(context, rutController.text),
             child: Icon(Icons.search),
           ),
         )
@@ -181,5 +190,19 @@ class UsersPageState extends State<UsersPage>
     );
 
     mostrarAlertaConTitulo(context, result['message'], 'Creación de usuarios');
+  }
+
+  _searchTrabajador(BuildContext context, String trabajadorId) async {
+    final data = await employeeProvider.show(trabajadorId);
+
+    setState(() {
+      currentEmployee = data;
+    });
+    
+    if (currentEmployee != null) {
+      mostrarAlertaConTitulo(context, 'Trabajador encontrado', 'Crear usuario');
+    } else {
+      mostrarAlertaConTitulo(context, 'Trabajador NO encontrado', 'Crear usuario');
+    }
   }
 }

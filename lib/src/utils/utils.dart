@@ -55,7 +55,15 @@ void mostrarAlertaConTitulo(BuildContext context, String message, String titulo)
       context: context,
       builder: (context) {
         return AlertDialog(
-          title: Text('$titulo'),
+          title: Row(
+            children: [
+              Icon(Icons.check,
+                color: Colors.green,
+              ),
+              SizedBox(width: 10,),
+              Text('$titulo')
+            ],
+          ),
           content: Text(message),
           actions: <Widget>[
             FlatButton(

@@ -21,4 +21,9 @@ class EmployeeListModel
       apellidoMaterno: json['apellido_materno']
     );
   }
+
+  @override
+  String toString() {
+    return '${this.nombre} ${this.apellidoPaterno} ${this.apellidoMaterno}';
+  }
 }
