@@ -37,7 +37,13 @@ void mostrarAlerta(BuildContext context, String message) {
     context: context,
     builder: (context) {
       return AlertDialog(
-        title: Text('Información incorrecta'),
+        title: Row(
+          children: <Widget>[
+            Icon(Icons.warning, color: Colors.amber[700],),
+            SizedBox(width: 10,),
+            Text('Advertencia'),
+          ],
+        ),
         content: Text(message),
         actions: <Widget>[
           FlatButton(
@@ -50,16 +56,14 @@ void mostrarAlerta(BuildContext context, String message) {
   );
 }
 
-void mostrarAlertaConTitulo(BuildContext context, String message, String titulo) {
+void mostrarAlertaConTitulo(BuildContext context, String message, String titulo, Widget icono) {
   showDialog(
       context: context,
       builder: (context) {
         return AlertDialog(
           title: Row(
             children: [
-              Icon(Icons.check,
-                color: Colors.green,
-              ),
+              icono,
               SizedBox(width: 10,),
               Text('$titulo')
             ],

@@ -178,9 +178,9 @@ class UsersPageState extends State<UsersPage>
   }
 
   _createOtherUser(BuildContext context) async {
-    print(rutController.text);
+    /* print(rutController.text);
     print(usernameController.text);
-    print(passwordController.text);
+    print(passwordController.text); */
 
     Map<String, dynamic> result = await usersProvider.create(
       usernameController.text.toString(),
@@ -189,7 +189,7 @@ class UsersPageState extends State<UsersPage>
       '2'
     );
 
-    mostrarAlertaConTitulo(context, result['message'], 'Creación de usuarios');
+    mostrarAlertaConTitulo(context, result['message'], 'Creación de usuarios', Icon(Icons.message));
   }
 
   _searchTrabajador(BuildContext context, String trabajadorId) async {
@@ -200,9 +200,9 @@ class UsersPageState extends State<UsersPage>
     });
     
     if (currentEmployee != null) {
-      mostrarAlertaConTitulo(context, 'Trabajador encontrado', 'Crear usuario');
+      mostrarAlertaConTitulo(context, 'Trabajador encontrado', 'Crear usuario', new Icon(Icons.check_circle, color: Colors.green));
     } else {
-      mostrarAlertaConTitulo(context, 'Trabajador NO encontrado', 'Crear usuario');
+      mostrarAlertaConTitulo(context, 'Trabajador NO encontrado', 'Crear usuario', new Icon(Icons.cancel, color: Colors.red,));
     }
   }
 }

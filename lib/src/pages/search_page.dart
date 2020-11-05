@@ -9,6 +9,7 @@ import 'package:remun_mobile/src/pages/home_page.dart';
 import 'package:remun_mobile/src/providers/employee_provider.dart';
 import 'package:remun_mobile/src/utils/utils.dart';
 import 'package:remun_mobile/src/widgets/drawer.dart';
+import 'package:tuple/tuple.dart';
 
 class SearchPage extends StatefulWidget
 {
@@ -239,12 +240,6 @@ class SearchPageState extends State<SearchPage>
   }
 
   _search(SearchBloc bloc, BuildContext context) async {
-    print('==================');
-    print('RUT: ${ bloc.rut }');
-    print('Periodo: ${ bloc.periodo }');
-    print('Tipo Pago: ${ bloc.tipoPago }');
-    print('==================');
-
     int tipoPagoId;
     if (bloc.tipoPago == 'SUELDO') {
       tipoPagoId = 1;
@@ -252,19 +247,19 @@ class SearchPageState extends State<SearchPage>
       tipoPagoId = 2;
     }
 
-    EmployeeModel info = await employeeProvider.cargarPagos(
+    Tuple3<String, bool, EmployeeModel> info = await employeeProvider.cargarPagos(
       bloc.rut,
       bloc.periodo,
-      tipoPagoId
+      tipoPagoId,
     );
 
-    if (info != null) {
+    if (info.item3 != null) {
       // print(info);
       Navigator.push(context, new MaterialPageRoute(
           builder: (_) => new HomePage(employee: info,)
       ));
     } else {
-      mostrarAlerta(context, 'Pago no encontrado para este trabajador');
+      mostrarAlerta(context, info.item1);
     }
   }
 

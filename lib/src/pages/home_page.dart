@@ -5,15 +5,19 @@ import 'package:remun_mobile/src/bloc/provider.dart';
 import 'package:remun_mobile/src/models/employee_model.dart';
 import 'package:remun_mobile/src/models/payment_detail_model.dart';
 import 'package:remun_mobile/src/models/payment_model.dart';
+import 'package:remun_mobile/src/models/planilla_model.dart';
 import 'package:remun_mobile/src/models/tarja_model.dart';
 import 'package:remun_mobile/src/providers/employee_provider.dart';
+import 'package:remun_mobile/src/providers/payroll_provider.dart';
 import 'package:remun_mobile/src/utils/utils.dart';
+import 'package:remun_mobile/src/widgets/alert_box.dart';
 import 'package:remun_mobile/src/widgets/drawer.dart';
+import 'package:tuple/tuple.dart';
 
 
 class HomePage extends StatefulWidget
 {
-  EmployeeModel employee;
+  final Tuple3<String, bool, EmployeeModel> employee;
   HomePage({
     this.employee
   });
@@ -27,11 +31,10 @@ class HomePageState extends State<HomePage>
   static String name = 'home';
 
   final employeeProvider = new EmployeeProvider();
+  final payrollProvider = new PayrollProvider();
 
   @override
   Widget build(BuildContext context) {
-
-    final bloc = Provider.ofS(context);
 
     return Scaffold(
       backgroundColor: Color(0xFFF5F5F5),
@@ -43,21 +46,7 @@ class HomePageState extends State<HomePage>
       body: Stack(
         children: [
           _crearFondo(context),
-          _crearMainComponent(context, widget.employee)
-          /*
-          FutureBuilder(
-            future: employeeProvider.cargarPagos(bloc.rut, bloc.periodo, 1),
-            builder: (BuildContext context, AsyncSnapshot<EmployeeModel> snapshot) {
-              if (snapshot.hasData) {
-                final employee = snapshot.data;
-                final currentPayment = employee.payment;
-
-                return _crearMainComponent(context, employee);
-              } else {
-                return Center(child: CircularProgressIndicator());
-              }
-            }
-          ),*/
+          _crearMainComponent(context, widget.employee.item3)
         ],
       ),
       drawer: buildDrawer(context),
@@ -78,30 +67,8 @@ class HomePageState extends State<HomePage>
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               SizedBox(height: 30),
-              Container(
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Text(
-                      '${ obtenerMes(currentPayment.mes) } ${ currentPayment.anio }',
-                      style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 25,
-                          fontWeight: FontWeight.w600
-                      ),
-                    ),
-                    //SizedBox(width: 5,),
-                    Expanded(
-                      child: FlatButton(
-                        onPressed: () => _settingModalCalendar(context),
-                        child: Icon(Icons.calendar_today,
-                          color: Colors.white,
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
+              _buildHeader(context, currentPayment),
+              widget.employee.item2 ? buildAlertBox(context, 'Observación', widget.employee.item1) : SizedBox(height: 0),
               SizedBox(height: 20,),
               _crearTarjeta(context, currentPayment),
               SizedBox(height: 20,),
@@ -131,6 +98,55 @@ class HomePageState extends State<HomePage>
       ),
     );
   }
+
+  Widget _buildHeader(BuildContext context, PaymentModel currentPayment) => Container(
+    child: Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        Text(
+          '${ obtenerMes(currentPayment.mes) } ${ currentPayment.anio }',
+          style: TextStyle(
+              color: Colors.white,
+              fontSize: 25,
+              fontWeight: FontWeight.w600
+          ),
+        ),
+        //SizedBox(width: 5,),
+        Expanded(
+          child: Container(
+            child: FlatButton(
+              onPressed: () => _settingModalCalendar(context),
+              child: Container(
+                height: 36,
+                width: 36,
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.only(
+                    topLeft: Radius.circular(7),
+                    topRight: Radius.circular(7),
+                    bottomLeft: Radius.circular(7),
+                    bottomRight: Radius.circular(7)
+                  ),
+                  boxShadow: [
+                    widget.employee.item2 ? BoxShadow(
+                      color: Colors.grey.withOpacity(0.7),
+                      spreadRadius: 5,
+                      blurRadius: 7,
+                      offset: Offset(0, 3), // changes position of shadow
+                    ) : BoxShadow()
+                  ],
+                ),
+                child: Icon(Icons.calendar_today,
+                  color: Colors.blueAccent,
+                  size: 26,
+                ),
+              ) 
+            ),
+          ) 
+        ),
+      ],
+    ),
+  );
 
   Widget _crearGrilla(BuildContext context, List<TarjaModel> tarja) => GridView.count(
     shrinkWrap: true,
@@ -471,32 +487,6 @@ class HomePageState extends State<HomePage>
 
   }
 
-  _settingModalCalendar(BuildContext context) {
-    showModalBottomSheet(
-        context: context,
-        builder: (BuildContext bc) {
-          return Container(
-            child: new Wrap(
-              children: [
-                Container(
-                  padding: EdgeInsets.symmetric(vertical: 20, horizontal: 30),
-                  child: Column(
-                    children: [
-                      ListTile(
-                          leading: new Icon(Icons.calendar_today),
-                          title: new Text('PAGOS'),
-                          onTap: () => {}
-                      ),
-                    ],
-                  ),
-                ),
-              ],
-            ),
-          );
-        }
-    );
-  }
-
   _settingModalBottomSheet(BuildContext context, int esIngreso, PaymentModel paymentModel) {
 
     List<PaymentDetailModel> details = paymentModel.details.where((e) => e.tipo == esIngreso).toList();
@@ -584,5 +574,90 @@ class HomePageState extends State<HomePage>
       backgroundColor: Colors.blueAccent,
       onPressed: ()=> Navigator.pushNamed(context, 'search'),
     );
+  }
+
+  _settingModalCalendar(BuildContext context) {
+    showModalBottomSheet(
+        context: context,
+        builder: (BuildContext bc) {
+          return Container(
+            child: Wrap(
+              children: <Widget>[
+                Container(
+                  padding: EdgeInsets.symmetric(vertical: 20, horizontal: 30),
+                  child: Column(
+                    children: <Widget>[
+                      ListTile(
+                          leading: new Icon(Icons.calendar_today),
+                          title: new Text('Seleccione PAGO',
+                            style: TextStyle(
+                              fontSize: 14,
+                              fontWeight: FontWeight.w700
+                            ),
+                          )
+                      ),
+                      _buildPayrollsList(context)
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          );
+        }
+    );
+  }
+
+  Widget _buildPayrollsList(BuildContext context) {
+    return FutureBuilder(
+      future: payrollProvider.getByTrabajador(widget.employee.item3.id),
+      builder: (BuildContext context, AsyncSnapshot<List<PlanillaModel>> snapshot) {
+        if (snapshot.hasData) {
+          final planillas = snapshot.data;
+          return Column(
+            children: planillas.map((item) => _buildPayrollListItem(context, item)).toList(),
+          );
+
+        } else {
+          return Center(child: CircularProgressIndicator());
+        }
+      },
+    );
+  }
+
+  Widget _buildPayrollListItem(BuildContext context, PlanillaModel planilla) {
+    return Container(
+      margin: EdgeInsets.only(top: 5, bottom: 5),
+      decoration: BoxDecoration(
+        border: Border.all(color: Colors.blueGrey),
+        borderRadius: BorderRadius.circular(10.0),
+      ),
+      child: ListTile(
+        title: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: <Widget>[
+            Text('${ planilla.empresa.nombreCorto } - ${ obtenerMes(planilla.mes) } ${ planilla.anio } - ${ planilla.tipoPago.descripcion }',
+              style: TextStyle(
+                fontSize: 14,
+              ),
+            )
+          ],
+        ),
+        onTap: () => _search(context, widget.employee.item3.id, '${planilla.anio}-${planilla.mes}', planilla.tipoPago.id, planilla.empresa.id)
+      ),
+    );
+  }
+
+  _search(BuildContext context, String rut, String periodo, int tipoPagoId, int empresaId) async {
+
+    Tuple3<String, bool, EmployeeModel> info = await employeeProvider.cargarPagos(rut, periodo, tipoPagoId, empresaId: empresaId);
+
+    if (info.item3 != null) {
+      // print(info);
+      Navigator.push(context, new MaterialPageRoute(
+          builder: (_) => new HomePage(employee: info,)
+      ));
+    } else {
+      mostrarAlerta(context, info.item1);
+    }
   }
 }
