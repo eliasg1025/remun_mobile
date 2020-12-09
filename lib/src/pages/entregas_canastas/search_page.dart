@@ -31,6 +31,7 @@ class SearchPageState extends State<SearchPage>
 
   // State
   EmployeeModel employeeModel;
+  bool loading = false;
 
   // Providers
   final employeeProvider = new EmployeeProvider();
@@ -41,12 +42,11 @@ class SearchPageState extends State<SearchPage>
 
   @override
   Widget build(BuildContext context) {
-    /*
-    return DefaultTabController(
+    /* return DefaultTabController(
       length: 2,
       child: Scaffold(
         appBar: AppBar(
-          title: Text('Consulta Sueldos'),
+          title: Text('Entrega Canastas'),
           backgroundColor: Colors.blueAccent[400],
           shadowColor: Colors.white10,
           bottom: TabBar(
@@ -64,8 +64,7 @@ class SearchPageState extends State<SearchPage>
         ),
         drawer: _crearDrawer(context)
       )
-    );
-    */
+    ); */
 
     return Scaffold(
       backgroundColor: Color(0xFFF5F5F5),
@@ -170,7 +169,7 @@ class SearchPageState extends State<SearchPage>
         builder: (BuildContext context, AsyncSnapshot snapshot) {
           return RaisedButton(
             child: Container(
-              child: Text('Buscar'),
+              child: !this.loading ? Text('Buscar') : CircularProgressIndicator(),
               padding: EdgeInsets.symmetric(horizontal: 80.0, vertical: 15.0),
             ),
             shape: RoundedRectangleBorder(
@@ -179,7 +178,7 @@ class SearchPageState extends State<SearchPage>
             elevation: 0.0,
             color: Colors.blueAccent,
             textColor: Colors.white,
-            onPressed: () => _search(bloc, context),
+            onPressed: !this.loading ? () => _search(bloc.rut, context) : null,
           );
         }
     );
@@ -303,19 +302,23 @@ class SearchPageState extends State<SearchPage>
     );
   }
 
-  _search(SearchBloc bloc, BuildContext context) async {
-
-    Tuple2<String, dynamic> info = await employeeProvider.getEntregasCanastas(bloc.rut);
+  _search(String rut, BuildContext context) async {
+    setState(() {
+      this.loading = true;
+    });
+    Tuple2<String, dynamic> info = await employeeProvider.getEntregasCanastas(rut);
 
     if (info.item2 != null) {
       mostrarAlertaConTitulo(context, info.item1, info.item1, Icon(Icons.check, color: Colors.green[700],),);
       setState(() {
-        this.employeeModel = info.item2;  
+        this.employeeModel = info.item2;
+        this.loading = false;
       });
     } else {
       mostrarAlerta(context, info.item1);
       setState(() {
-        this.employeeModel = null;  
+        this.employeeModel = null;
+        this.loading = false;
       });
     }
   }
@@ -325,9 +328,13 @@ class SearchPageState extends State<SearchPage>
 
     Tuple2<String, dynamic> info = await employeeProvider.getEntregasCanastas(employeeId);
     if (info.item2 != null) {
-      this.employeeModel = info.item2;
+      setState(() {
+        this.employeeModel = info.item2;
+      });
     } else {
-      this.employeeModel = null;
+      setState(() {
+        this.employeeModel = null;
+      });
     }
 
     mostrarAlertaConTitulo(context, result['message'], 'Entrega Canastas', Icon(Icons.message));

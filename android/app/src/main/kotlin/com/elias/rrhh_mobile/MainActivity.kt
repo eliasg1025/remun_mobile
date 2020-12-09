@@ -1,4 +1,4 @@
-package com.elias.remun_mobile
+package com.elias.rrhh_mobile
 
 import io.flutter.embedding.android.FlutterActivity
 
