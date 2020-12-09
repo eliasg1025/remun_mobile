@@ -60,4 +60,33 @@ class EmployeeProvider
       return Tuple3<String, bool, EmployeeModel>(e.toString(), null, null);
     }
   }
+
+  Future<Tuple2<String, EmployeeModel>> getEntregasCanastas(String rut) async
+  {
+    final url = '$_url/employees/$rut/entregas-canastas';
+    final resp = await http.get(
+      url,
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': _prefs.token,
+        'Accept': 'application/json'
+      }
+    );
+
+    try {
+      final Map<String, dynamic> decodedData = json.decode(resp.body);
+
+      print(decodedData);
+
+      if (decodedData.containsKey('data')) {
+        final EmployeeModel employee = EmployeeModel.fromJsonMap(decodedData['data']);
+        return Tuple2<String, EmployeeModel>(decodedData['message'], employee);
+      } else {
+        return Tuple2<String, EmployeeModel>(decodedData['message'], null);
+      }
+    } catch (e) {
+      //print(e);
+      return Tuple2<String, EmployeeModel>('Error: ' + e.toString(), null);
+    }
+  }
 }

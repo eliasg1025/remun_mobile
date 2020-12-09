@@ -40,6 +40,16 @@ Widget buildDrawer(BuildContext context) {
           ListTile(
             title: Row(
               children: [
+                Icon(Icons.playlist_add_check),
+                SizedBox(width: 10,),
+                Text('Entrega Canastas'),
+              ],
+            ),
+            onTap: () => Navigator.pushNamed(context, 'entregas_canastas.search'),
+          ),
+          ListTile(
+            title: Row(
+              children: [
                 Icon(Icons.supervised_user_circle),
                 SizedBox(width: 10,),
                 Text('Gestión Usuarios'),

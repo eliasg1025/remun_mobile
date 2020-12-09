@@ -4,6 +4,7 @@ import 'package:remun_mobile/src/pages/home_page.dart';
 import 'package:remun_mobile/src/pages/login_page.dart';
 import 'package:remun_mobile/src/pages/search_page.dart';
 import 'package:remun_mobile/src/pages/users_page.dart';
+import 'package:remun_mobile/src/pages/entregas_canastas/search_page.dart' as entregasCanastas;
 import 'package:remun_mobile/src/preferencias_usuario/preferencias_usuario.dart';
 
 void main() async {
@@ -30,6 +31,7 @@ class MyApp extends StatelessWidget
           'home': (BuildContext context) => HomePage(),
           'search': (BuildContext context) => SearchPage(),
           'users': (BuildContext context) => UsersPage(),
+          'entregas_canastas.search': (BuildContext context) => entregasCanastas.SearchPage()
         },
       ),
     );

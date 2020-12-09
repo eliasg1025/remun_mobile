@@ -16,9 +16,14 @@ class UserListModel
   });
 
   factory UserListModel.fromJson(Map<String, dynamic> json) {
-
-    EmployeeListModel trabajador = EmployeeListModel.fromJson(json['employee']);
-    RolModel rol = RolModel.fromJson(json['rol']);
+    EmployeeListModel trabajador;
+    if (json.containsKey('trabajador')) {
+      trabajador = EmployeeListModel.fromJson(json['trabajador']);
+    } else {
+      trabajador = EmployeeListModel.fromJson(json['employee']);
+    }
+    
+    RolModel rol = json.containsKey('rol') ? RolModel.fromJson(json['rol']) : null;
 
     return UserListModel(
       id: json['id'],

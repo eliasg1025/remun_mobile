@@ -1,3 +1,4 @@
+import 'package:remun_mobile/src/models/entrega_canatas_model.dart';
 import 'package:remun_mobile/src/models/payment_model.dart';
 import 'package:remun_mobile/src/models/tarja_model.dart';
 
@@ -9,6 +10,7 @@ class EmployeeModel
   String apellidoMaterno;
   PaymentModel payment;
   List<TarjaModel> tarja;
+  EntregaCanastaModel entregaCanasta;
 
   EmployeeModel({
     this.id,
@@ -16,19 +18,25 @@ class EmployeeModel
     this.apellidoPaterno,
     this.apellidoMaterno,
     this.payment,
-    this.tarja
+    this.tarja,
+    this.entregaCanasta,
   });
 
   factory EmployeeModel.fromJsonMap(Map<String, dynamic> json)
   {
-    /*
-    var list = json['payment'] as List;
-    List<PaymentModel> paymentsList = list.map((i) => PaymentModel.fromJsonMap(i)).toList();*/
+    PaymentModel payment = json.containsKey('payment')
+      ? PaymentModel.fromJsonMap(json['payment'])
+      : null;
+    
+    List<TarjaModel> tarjaList = [];
+    if (json.containsKey('tarja')) {
+      var list1 = json['tarja'] as List;
+      tarjaList = list1.map((i) => TarjaModel.fromJson(i)).toList();
+    }
 
-    PaymentModel payment = PaymentModel.fromJsonMap(json['payment']);
-
-    var list1 = json['tarja'] as List;
-    List<TarjaModel> tarjaList = list1.map((i) => TarjaModel.fromJson(i)).toList();
+    EntregaCanastaModel entregaCanasta = json.containsKey('entrega_canasta')
+      ? ( json['entrega_canasta'] != null ? EntregaCanastaModel.fromJsonMap(json['entrega_canasta']) : null)
+      : null;
 
     return EmployeeModel(
         id: json['id'],
@@ -36,7 +44,8 @@ class EmployeeModel
         apellidoPaterno: json['apellido_paterno'],
         apellidoMaterno: json['apellido_materno'],
         payment: payment,
-        tarja: tarjaList
+        tarja: tarjaList,
+        entregaCanasta: entregaCanasta
     );
   }
 }

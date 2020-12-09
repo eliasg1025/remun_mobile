@@ -5,8 +5,10 @@ import 'package:flutter/services.dart';
 import 'package:qrscan/qrscan.dart' as scanner;
 import 'package:remun_mobile/src/bloc/provider.dart';
 import 'package:remun_mobile/src/models/employee_model.dart';
+import 'package:remun_mobile/src/models/period_model.dart';
 import 'package:remun_mobile/src/pages/home_page.dart';
 import 'package:remun_mobile/src/providers/employee_provider.dart';
+import 'package:remun_mobile/src/providers/payroll_provider.dart';
 import 'package:remun_mobile/src/utils/utils.dart';
 import 'package:remun_mobile/src/widgets/drawer.dart';
 import 'package:tuple/tuple.dart';
@@ -27,7 +29,11 @@ class SearchPageState extends State<SearchPage>
     super.initState();
   }
 
+  // Providers
   final employeeProvider = new EmployeeProvider();
+  final payrollProvider = new PayrollProvider();
+
+  // Controllers
   final _rutController = new TextEditingController();
 
   @override
@@ -165,7 +171,42 @@ class SearchPageState extends State<SearchPage>
   }
 
   Widget _crearInputPeriodo(SearchBloc bloc) {
-    return StreamBuilder(
+    return FutureBuilder(
+      future: payrollProvider.getPeriods(),
+      builder: (BuildContext context, AsyncSnapshot<List<PeriodModel>> snapshot) {
+        if (snapshot.hasData) {
+          final periodos = snapshot.data;
+          return StreamBuilder(
+            stream: bloc.periodoStream,
+            builder: (BuildContext context, AsyncSnapshot snapshot) {
+              return Container(
+                width: 160,
+                padding: EdgeInsets.symmetric(horizontal: 20.0),
+                child: DropdownButton<String>(
+                  hint: Text('Periodo'),
+                  //icon: Icon(Icons.calendar_today),
+                  underline: Container(
+                    height: 2,
+                    color: Colors.blueAccent,
+                  ),
+                  value: bloc.periodo,
+                  items: periodos.map((value) => DropdownMenuItem<String>(
+                    value: '${value.anio}-${value.mes}',
+                    child: Text('${value.anio}-${value.mes}'),
+                  )).toList(),
+                  onChanged: (value) => bloc.changePeriodo(value),
+                ),
+              );
+            },
+          );
+
+        } else {
+          return Center(child: CircularProgressIndicator());
+        }
+      }
+    );
+
+    /* return StreamBuilder(
       stream: bloc.periodoStream,
       builder: (BuildContext context, AsyncSnapshot snapshot) {
         return Container(
@@ -179,7 +220,7 @@ class SearchPageState extends State<SearchPage>
               color: Colors.blueAccent,
             ),
             value: bloc.periodo,
-            items: <String>['2020-10', '2020-09'].map((value) => DropdownMenuItem<String>(
+            items: <String>['2020-11', '2020-10', '2020-09'].map((value) => DropdownMenuItem<String>(
               value: value,
               child: Text(value),
             )).toList(),
@@ -187,7 +228,7 @@ class SearchPageState extends State<SearchPage>
           ),
         );
       },
-    );
+    ); */
   }
 
   Widget _crearInputTipoPago(SearchBloc bloc) {
