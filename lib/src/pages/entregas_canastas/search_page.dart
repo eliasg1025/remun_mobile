@@ -3,9 +3,7 @@ import 'dart:async';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:qrscan/qrscan.dart' as scanner;
-import 'package:remun_mobile/src/bloc/provider.dart';
 import 'package:remun_mobile/src/models/employee_model.dart';
 import 'package:remun_mobile/src/providers/employee_provider.dart';
 import 'package:remun_mobile/src/providers/entrega_canasta_provider.dart';
@@ -32,6 +30,9 @@ class SearchPageState extends State<SearchPage>
   // State
   EmployeeModel employeeModel;
   bool loading = false;
+  Map<String, dynamic> form = {
+    'rut': '',
+  };
 
   // Providers
   final employeeProvider = new EmployeeProvider();
@@ -40,9 +41,11 @@ class SearchPageState extends State<SearchPage>
   // Controllers
   final _rutController = new TextEditingController();
 
+
   @override
   Widget build(BuildContext context) {
-    /* return DefaultTabController(
+
+    return DefaultTabController(
       length: 2,
       child: Scaffold(
         appBar: AppBar(
@@ -51,22 +54,22 @@ class SearchPageState extends State<SearchPage>
           shadowColor: Colors.white10,
           bottom: TabBar(
             tabs: [
-              Tab(icon: Icon(Icons.contacts), text: 'Consulta',),
-              Tab(icon: Icon(Icons.contacts), text: 'Crear Usuarios',)
+              Tab(text: 'Entrega',),
+              Tab(text: 'Reportes',)
             ],
           ),
         ),
         body: TabBarView(
           children: [
-            _searchForm(context),
-            Text('bye')
+            _buildEntregaView(context),
+            _buildReportesView(context)
           ],
         ),
-        drawer: _crearDrawer(context)
+        drawer: buildDrawer(context)
       )
-    ); */
+    );
 
-    return Scaffold(
+    /* return Scaffold(
       backgroundColor: Color(0xFFF5F5F5),
       appBar: AppBar(
         title: Text('Entrega Canastas'),
@@ -82,11 +85,32 @@ class SearchPageState extends State<SearchPage>
         ),
       ),
       drawer: buildDrawer(context)
+    ); */
+  }
+
+  Widget _buildEntregaView(BuildContext context) {
+    return SingleChildScrollView(
+      child: Column(
+        children: <Widget>[
+          _buildSearchForm(context),
+          _buildEntregaCanasta(context)
+        ],
+      ),
+    );
+  }
+
+  Widget _buildReportesView(BuildContext context) {
+    return SingleChildScrollView(
+      child: Column(
+        children: <Widget>[
+          Text('hi')
+        ],
+      ),
     );
   }
 
   Widget _buildSearchForm(BuildContext context) {
-    final bloc = Provider.ofS(context);
+    
     final size = MediaQuery.of(context).size;
 
     return Container(
@@ -113,74 +137,59 @@ class SearchPageState extends State<SearchPage>
           SizedBox(height: 40.0),
           Row(
               children: [
-                _crearInputRut(bloc),
-                _crearBotonQr(bloc),
+                _crearInputRut(),
+                _crearBotonQr(),
               ]
           ),
           SizedBox(height: 20.0,),
-          _crearBotonSubmit(bloc)
+          _crearBotonSubmit()
         ],
       ),
     );
   }
 
-  Widget _crearInputRut(SearchBloc bloc) {
-
-    return StreamBuilder(
-      stream: bloc.rutStream,
-      builder: (BuildContext context, AsyncSnapshot snapshot) {
-        return Container(
-          width: 250,
-          padding: EdgeInsets.symmetric(horizontal: 20.0),
-          child: TextFormField(
-            keyboardType: TextInputType.text,
-            decoration: InputDecoration(
-                //icon: Icon(Icons.supervised_user_circle, color: Colors.blueAccent),
-                //hintText: 'Ej: 12345678',
-                labelText: 'RUT del trabajador',
-                //counterText: snapshot.data,
-                errorText: snapshot.error
-            ),
-            onChanged: (value) => bloc.changeRut(value),
-            controller: _rutController,
-          ),
-        );
-      },
+  Widget _crearInputRut() {
+    return Container(
+      width: 250,
+      padding: EdgeInsets.symmetric(horizontal: 20.0),
+      child: TextFormField(
+        keyboardType: TextInputType.text,
+        decoration: InputDecoration(
+            labelText: 'RUT del trabajador',
+        ),
+        onChanged: (value) => _handleInput(value),
+        controller: _rutController,
+      ),
     );
   }
 
-  Widget _crearBotonQr(SearchBloc bloc) {
+  Widget _crearBotonQr() {
     return Container(
       width: 60,
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(5.0),
       ),
       child: RaisedButton(
-        onPressed: () => scan(bloc),
+        onPressed: () => scan(),
         child: Text('QR'),
       ),
     );
   }
 
-  Widget _crearBotonSubmit(SearchBloc bloc) {
+  Widget _crearBotonSubmit() {
     // formValidStream
-    return StreamBuilder(
-        stream: bloc.formValidStream,
-        builder: (BuildContext context, AsyncSnapshot snapshot) {
-          return RaisedButton(
-            child: Container(
-              child: !this.loading ? Text('Buscar') : CircularProgressIndicator(),
-              padding: EdgeInsets.symmetric(horizontal: 80.0, vertical: 15.0),
-            ),
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(5.0)
-            ),
-            elevation: 0.0,
-            color: Colors.blueAccent,
-            textColor: Colors.white,
-            onPressed: !this.loading ? () => _search(bloc.rut, context) : null,
-          );
-        }
+    return RaisedButton(
+      child: Container(
+        child: !this.loading ? Text('Buscar') : CircularProgressIndicator(),
+        padding: EdgeInsets.symmetric(horizontal: 80.0, vertical: 15.0),
+      ),
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(5.0)
+      ),
+      elevation: 0.0,
+      color: Colors.blueAccent,
+      textColor: Colors.white,
+      onPressed: !this.loading ? () => _search(this.form['rut'], context) : null,
     );
   }
 
@@ -340,15 +349,20 @@ class SearchPageState extends State<SearchPage>
     mostrarAlertaConTitulo(context, result['message'], 'Entrega Canastas', Icon(Icons.message));
   }
 
-  Future scan(SearchBloc bloc) async {
+  _handleInput(value) {
+    setState(() {
+      this.form['rut'] = value;
+    });
+  }
+
+  Future scan() async {
     try {
       String barcode = await scanner.scan();
 
       setState(() {
         this.barcode = barcode;
+        this.form['rut'] = barcode;
       });
-
-      bloc.changeRut(barcode);
 
       _rutController.text = barcode;
 
