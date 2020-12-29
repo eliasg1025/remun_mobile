@@ -8,8 +8,8 @@ import 'package:tuple/tuple.dart';
 
 class EmployeeProvider
 {
-  //final String _url = 'http://209.151.144.74/api';
-  final String _url = 'http://10.0.2.2:8000/api';
+  final String _url = 'http://209.151.144.74/api';
+  //final String _url = 'http://10.0.2.2:8000/api';
   final _prefs = new PreferenciasUsuario();
 
   Future<EmployeeListModel> show(String trabajadorId) async {
