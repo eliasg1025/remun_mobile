@@ -4,7 +4,8 @@ import 'package:http/http.dart' as http;
 import 'package:remun_mobile/src/preferencias_usuario/preferencias_usuario.dart';
 class EntregaCanastaProvider
 {
-  final String _url = 'http://209.151.144.74/api';
+  //final String _url = 'http://209.151.144.74/api';
+  final String _url = 'http://10.0.2.2:8000/api';
   final _prefs = new PreferenciasUsuario();
 
   Future<Map<String, dynamic>> create(String employeeId) async {

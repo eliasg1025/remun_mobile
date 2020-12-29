@@ -8,7 +8,8 @@ import 'package:tuple/tuple.dart';
 
 class EmployeeProvider
 {
-  final String _url = 'http://209.151.144.74/api';
+  //final String _url = 'http://209.151.144.74/api';
+  final String _url = 'http://10.0.2.2:8000/api';
   final _prefs = new PreferenciasUsuario();
 
   Future<EmployeeListModel> show(String trabajadorId) async {
@@ -46,7 +47,7 @@ class EmployeeProvider
     try {
       final Map<String, dynamic> decodedData = json.decode(resp.body);
 
-      //print(decodedData);
+      print(decodedData);
 
       if (decodedData.containsKey('data')) {
         final EmployeeModel employee = EmployeeModel.fromJsonMap(decodedData['data']);

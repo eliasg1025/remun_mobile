@@ -103,7 +103,7 @@ class SearchPageState extends State<SearchPage>
     return SingleChildScrollView(
       child: Column(
         children: <Widget>[
-          Text('hi')
+          Text('reportes')
         ],
       ),
     );

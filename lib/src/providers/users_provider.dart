@@ -6,7 +6,8 @@ import 'package:remun_mobile/src/models/user_list_model.dart';
 
 class UserProvider
 {
-  final String _url = 'http://209.151.144.74/api';
+  //final String _url = 'http://209.151.144.74/api';
+  final String _url = 'http://10.0.2.2:8000/api';
   final _prefs = new PreferenciasUsuario();
 
   Future<Map<String, dynamic>> login(String email, String password) async {

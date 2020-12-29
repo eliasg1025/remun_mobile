@@ -1,3 +1,4 @@
+import 'package:remun_mobile/src/models/empresa_model.dart';
 import 'package:remun_mobile/src/models/payment_detail_model.dart';
 import 'package:remun_mobile/src/models/payment_type_model.dart';
 
@@ -17,6 +18,7 @@ class PaymentModel
   int zonaId;
   List<PaymentDetailModel> details;
   PaymentTypeModel paymentType;
+  EmpresaModel empresa;
 
   PaymentModel({
     this.id,
@@ -33,6 +35,7 @@ class PaymentModel
     this.zonaId,
     this.details,
     this.paymentType,
+    this.empresa,
   });
 
   factory PaymentModel.fromJsonMap(Map<String, dynamic> json)
@@ -41,6 +44,8 @@ class PaymentModel
     List<PaymentDetailModel> paymentsDetailList = list.map((i) => PaymentDetailModel.fromJson(i)).toList();
     
     PaymentTypeModel paymentType = PaymentTypeModel.fromJson(json['type_payment']);
+
+    EmpresaModel empresa = EmpresaModel.fromJson(json['company']);
     
     return PaymentModel(
       id: json['id'],
@@ -54,7 +59,8 @@ class PaymentModel
       employeeId: json['trabajador_id'],
       zonaId: json['zona_id'],
       details: paymentsDetailList,
-      paymentType: paymentType
+      paymentType: paymentType,
+      empresa: empresa,
     );
   }
 

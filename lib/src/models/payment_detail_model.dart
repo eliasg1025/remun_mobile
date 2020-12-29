@@ -1,25 +1,25 @@
 class PaymentDetailModel
 {
-  int id;
+  int planillaId;
+  String trabajadorId;
   String concepto;
   double monto;
   int tipo;
-  int paymentId;
 
   PaymentDetailModel({
-    this.id,
+    this.planillaId,
+    this.trabajadorId,
     this.concepto,
     this.monto,
     this.tipo,
-    this.paymentId
   });
 
   PaymentDetailModel.fromJson(Map<String, dynamic> json)
   {
-    id = json['id'];
+    planillaId = json['planilla_id'];
+    trabajadorId = json['trabajador_id'];
     concepto = json['concepto'];
-    monto = json['monto'] + 0.0;
+    monto = double.parse(json['monto']);
     tipo = json['tipo'];
-    paymentId = json['pago_id'];
   }
 }

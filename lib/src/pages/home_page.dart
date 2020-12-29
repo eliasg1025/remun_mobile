@@ -385,7 +385,7 @@ class HomePageState extends State<HomePage>
                                   SizedBox(height: 5,),
                                   Text('${ employee.nombre } ${ employee.apellidoPaterno } ${ employee.apellidoMaterno }'),
                                   SizedBox(height: 5,),
-                                  Text('${ employee.payment.companyId == 9 ? 'RAPEL' : 'VERFRUT' }',
+                                  Text('${ employee.payment.empresa.nombreCorto }',
                                     style: TextStyle(
                                       fontWeight: FontWeight.w700
                                     ),
