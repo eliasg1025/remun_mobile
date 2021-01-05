@@ -522,16 +522,16 @@ class HomePageState extends State<HomePage>
                         children: [
                           Text('${ item.concepto }',
                             style: TextStyle(
-                                fontSize: item.concepto == '101 NETO A PAGO' ? 14 : 12,
-                                fontWeight: item.concepto == '101 NETO A PAGO' ? FontWeight.w700 : FontWeight.normal,
-                                color: item.concepto == '101 NETO A PAGO' ? Colors.blueGrey : Colors.black
+                                fontSize: item.concepto.contains('NETO A PAGO') ? 14 : 12,
+                                fontWeight: item.concepto.contains('NETO A PAGO') ? FontWeight.w700 : FontWeight.normal,
+                                color: item.concepto.contains('NETO A PAGO') ? Colors.blueGrey : Colors.black
                             ),
                           ),
                           Text('S/. ${ item.monto }',
                             style: TextStyle(
-                                fontSize: item.concepto == '101 NETO A PAGO' ? 17 : 15,
-                                fontWeight: item.concepto == '101 NETO A PAGO' ? FontWeight.w700 : FontWeight.w600,
-                                color: item.concepto == '101 NETO A PAGO' ? Colors.blueGrey : Colors.black
+                                fontSize: item.concepto.contains('NETO A PAGO') ? 17 : 15,
+                                fontWeight: item.concepto.contains('NETO A PAGO') ? FontWeight.w700 : FontWeight.w600,
+                                color: item.concepto.contains('NETO A PAGO') ? Colors.blueGrey : Colors.black
                             ),
                           )
                         ],

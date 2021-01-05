@@ -66,7 +66,7 @@ class PaymentModel
 
   String hasAsignacionFamiliar()
   {
-    var asig = this.details.firstWhere((element) => element.concepto == '150 ASIG. FAMILIAR', orElse: () => null);
+    var asig = this.details.firstWhere((element) => element.concepto.contains('ASIG. FAMILIAR') , orElse: () => null);
 
     return asig == null ? 'NO TIENE' : 'SI TIENE (S/ .${ asig.monto })';
   }
