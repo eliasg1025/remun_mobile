@@ -30,6 +30,7 @@ class SearchPageState extends State<SearchPage>
   // State
   EmployeeModel employeeModel;
   bool loading = false;
+  bool loadingEntrega = false;
   Map<String, dynamic> form = {
     'rut': '',
   };
@@ -265,7 +266,7 @@ class SearchPageState extends State<SearchPage>
       child: Container(
         padding: EdgeInsets.symmetric(vertical: 15.0),
         width: size.width * 0.60,
-        child: Row(
+        child: !this.loadingEntrega ? Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Icon(Icons.check),
@@ -277,14 +278,14 @@ class SearchPageState extends State<SearchPage>
               ),
             )
           ],
-        ),
+        ) : CircularProgressIndicator(),
       ),
       shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(7.0)
       ),
       color: Colors.green,
       textColor: Colors.white,
-      onPressed: !seEntrego ? () => _createEntregaCanasta(context, this.employeeModel.id) : null,
+      onPressed: !seEntrego && !this.loadingEntrega ? () => _createEntregaCanasta(context, this.employeeModel.id) : null,
     );
   }
 
@@ -333,16 +334,21 @@ class SearchPageState extends State<SearchPage>
   }
 
   _createEntregaCanasta(BuildContext context, employeeId) async {
+    setState(() {
+      this.loadingEntrega = true;
+    });
     Map<String, dynamic> result = await entregaCanastaProvider.create(employeeId);
 
     Tuple2<String, dynamic> info = await employeeProvider.getEntregasCanastas(employeeId);
     if (info.item2 != null) {
       setState(() {
         this.employeeModel = info.item2;
+        this.loadingEntrega = false;
       });
     } else {
       setState(() {
         this.employeeModel = null;
+        this.loadingEntrega = false;
       });
     }
 

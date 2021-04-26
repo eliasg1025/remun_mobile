@@ -7,6 +7,7 @@ class LoginPage extends StatelessWidget
 {
   static String name = 'login';
 
+  bool isLoading = false;
   final userProvider = new UserProvider();
 
   @override
@@ -140,7 +141,7 @@ class LoginPage extends StatelessWidget
       builder: (BuildContext context, AsyncSnapshot snapshot) {
         return RaisedButton(
           child: Container(
-            child: Text('Ingresar'),
+            child: !this.isLoading ? Text('Ingresar') : CircularProgressIndicator(),
             padding: EdgeInsets.symmetric(horizontal: 80.0, vertical: 15.0),
           ),
           shape: RoundedRectangleBorder(
@@ -161,15 +162,18 @@ class LoginPage extends StatelessWidget
     print('Email: ${ bloc.email }');
     print('Password: ${ bloc.password }');
     print('==================');*/
+    this.isLoading = true;
+    try {
+      Map info = await userProvider.login(bloc.email, bloc.password);
 
-    Map info = await userProvider.login(bloc.email, bloc.password);
-
-    if ( info['ok'] ) {
-      Navigator.pushReplacementNamed(context, 'search');
-    } else {
-      mostrarAlerta(context, info['message']);
+      if ( info['ok'] ) {
+        Navigator.pushReplacementNamed(context, 'search');
+      } else {
+        mostrarAlerta(context, info['message']);
+      }
+    } finally {
+      this.isLoading = false;
     }
-
   }
 
   Widget _crearFondo(BuildContext context) {
