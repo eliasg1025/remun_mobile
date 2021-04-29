@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:qrscan/qrscan.dart' as scanner;
 import 'package:remun_mobile/src/models/employee_model.dart';
+import 'package:remun_mobile/src/pages/entregas_canastas/reportes.dart';
 import 'package:remun_mobile/src/providers/employee_provider.dart';
 import 'package:remun_mobile/src/providers/entrega_canasta_provider.dart';
 import 'package:remun_mobile/src/utils/utils.dart';
@@ -63,7 +64,8 @@ class SearchPageState extends State<SearchPage>
         body: TabBarView(
           children: [
             _buildEntregaView(context),
-            _buildReportesView(context)
+            //_buildReportesView(context),
+            new ReportesView()
           ],
         ),
         drawer: buildDrawer(context)

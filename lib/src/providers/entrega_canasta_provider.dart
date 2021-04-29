@@ -29,4 +29,23 @@ class EntregaCanastaProvider
       return { 'message': 'Error ${e.toString()}' };
     }
   }
+
+  Future<Map<String, dynamic>> getReporte() async {
+    try {
+      final resp = await http.get(
+        '$_url/entregas-canastas/reporte',
+        headers: {
+          'Authorization': _prefs.token,
+          'Accept': 'application/json'
+        },
+      );
+
+      Map<String, dynamic> decodedResp = json.decode(resp.body);
+
+      return decodedResp['data'];
+    } catch (e) {
+      return { 'message': 'Error ${e.toString()}' };
+    }
+  }
+
 }
